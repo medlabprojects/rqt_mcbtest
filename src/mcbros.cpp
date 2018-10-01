@@ -71,7 +71,8 @@ bool McbRos::init(std::string nodeName)
   subEncoderCurrent_ = nh_.subscribe(topicEncoderCurrent.c_str(), 1, &McbRos::callbackSubEncoderCurrent, this);
 
   // setup subLimitSwitchEvent_
-
+  std::string topicLimitSwitchEvent = "/" + nodeName_+ "/limit_switch_event";
+  subLimitSwitchEvent_ = nh_.subscribe(topicLimitSwitchEvent.c_str(), 1, &McbRos::callbackSubLimitSwitchEvent, this);
 }
 
 bool McbRos::enableRosControl(bool cmd)
@@ -278,4 +279,9 @@ void McbRos::callbackSubStatus(const medlab_motor_control_board::McbStatus::Cons
   }
 
   emit newStatus();
+}
+
+void McbRos::callbackSubLimitSwitchEvent(const medlab_motor_control_board::EnableMotor::ConstPtr &msg)
+{
+  emit limitSwitchEvent(msg->motor, msg->enable);
 }

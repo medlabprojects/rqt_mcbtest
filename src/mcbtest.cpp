@@ -89,8 +89,14 @@ void McbTest::disableAllMotors()
 
 void McbTest::slot_checkBox_motorEnable(int motor)
 {
+  // see if box was checked or unchecked, then issue command
   bool enable = checkBox_motorEnable_.at(motor)->isChecked();
   motorBoard_->enableMotor(motor, enable);
+
+  // clear a potential "Triggered" label if enabling the motor
+  if(enable){
+    label_limit_.at(motor)->clear();
+  }
 }
 
 void McbTest::zeroCurrentPosition(int motor)
@@ -143,6 +149,19 @@ void McbTest::slot_newStatus()
   // update motor states
   for(int ii=0; ii<maxMotors_; ii++){
     checkBox_motorEnable_.at(ii)->setChecked(motorBoard_->isMotorEnabled(ii));
+  }
+}
+
+void McbTest::slot_limitSwitchEvent(int motor, bool state)
+{
+  // check if the E-Stop was triggered
+  if(motor == 6){
+    for(int ii=0; ii<maxMotors_; ii++){
+      label_limit_.at(ii)->setText("E-STOP!");
+    }
+  }
+  else if(motor < 6){
+    label_limit_.at(motor)->setText("Triggered");
   }
 }
 
@@ -231,6 +250,7 @@ void McbTest::connectNode()
   connect(motorBoard_, SIGNAL(connectionLost()), this, SLOT(connectionLost()));
   connect(motorBoard_, SIGNAL(newPositions(medlab_motor_control_board::McbEncoderCurrent)), this, SLOT(updatePositionLabels(medlab_motor_control_board::McbEncoderCurrent)));
   connect(motorBoard_, SIGNAL(newStatus()), this, SLOT(slot_newStatus()));
+  connect(motorBoard_, SIGNAL(limitSwitchEvent(int,bool)), this, SLOT(slot_limitSwitchEvent(int,bool)));
 
   // start timer to regularly request status
   std::string topicGetStatus = "/" + nodeName + "/get_status";
@@ -290,7 +310,7 @@ void McbTest::slot_motorStateChanged(int motor)
   // check current motor state
   bool enabled = motorBoard_->isMotorEnabled(motor);
 
-  // effectively enables/disables counter
+  // enable/disable counter (effectively; set step size to 0)
   counter_positionDesired_.at(motor)->setSingleStep((enabled ? 1.0 : 0.0));
 }
 

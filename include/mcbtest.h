@@ -50,6 +50,7 @@ protected slots:
   void newDesiredPosition(int motor);
   void updatePositionLabels(medlab_motor_control_board::McbEncoderCurrent positions);
   void slot_newStatus(void); // connected to McbRos::newStatus() signal
+  void slot_limitSwitchEvent(int motor, bool state);
 
 
 private:

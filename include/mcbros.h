@@ -57,7 +57,7 @@ private:
   ros::Publisher  pubSetGains_;
   ros::Subscriber subStatus_;
   ros::Subscriber subEncoderCurrent_;
-  ros::Subscriber limitSwitchEvent_;
+  ros::Subscriber subLimitSwitchEvent_;
 
   bool connected_ = false; // true after first status message received
   bool currentControlState_; // 0 => ROS Idle; 1 => ROS Control
@@ -66,6 +66,7 @@ private:
 
   void callbackSubEncoderCurrent(const medlab_motor_control_board::McbEncoderCurrent::ConstPtr& msg);
   void callbackSubStatus(const medlab_motor_control_board::McbStatus::ConstPtr& msg);
+  void callbackSubLimitSwitchEvent(const medlab_motor_control_board::EnableMotor::ConstPtr& msg);
 
 signals:
   void connectionEstablished(void);
@@ -75,6 +76,7 @@ signals:
   void motorStateChanged(int); // index of motor that changed
   void newStatus(void); // emitted after every new status is received
   void lastMotorStates(QVector<bool>);
+  void limitSwitchEvent(int motor, bool state);
 };
 
 #endif // MCBROS_H
