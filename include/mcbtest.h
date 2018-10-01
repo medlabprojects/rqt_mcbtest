@@ -63,6 +63,8 @@ private:
   QVector< QLabel* > label_effort_;
   QWidget* widget_;
 
+  McbRos* motorBoard_;
+
   ros::Timer statusTimer_;
   double statusTimerInterval_;
   ros::Publisher pubStatus_;
@@ -74,9 +76,6 @@ private:
   void initUiNames(void);
   const uint8_t maxMotors_;
   int numMotorsDetected_ = -1;
-
-//  std::vector<McbRos*> motorBoards_;
-  QVector<McbRos*> motorBoards_;
 };
 } // namespace
 #endif // my_namespace__my_plugin_H

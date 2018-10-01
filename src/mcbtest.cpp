@@ -74,7 +74,7 @@ void McbTest::initPlugin(qt_gui_cpp::PluginContext& context)
 void McbTest::publishEnableRos(bool enable)
 {
   // send message to enable ROS control
-  motorBoards_.at(0)->enableRosControl(enable);
+  motorBoard_->enableRosControl(enable);
 }
 
 void McbTest::enableAllMotors()
@@ -90,34 +90,33 @@ void McbTest::disableAllMotors()
 void McbTest::slot_checkBox_motorEnable(int motor)
 {
   bool enable = checkBox_motorEnable_.at(motor)->isChecked();
-  motorBoards_.at(0)->enableMotor(motor, enable);
+  motorBoard_->enableMotor(motor, enable);
 }
 
 void McbTest::zeroCurrentPosition(int motor)
 {
-  if(motorBoards_.at(0)->isRosControlEnabled()){
-    bool motorWasEnabled = motorBoards_.at(0)->isMotorEnabled(motor);
-    motorBoards_.at(0)->zeroCurrentPosition(motor);
+  if(motorBoard_->isRosControlEnabled()){
+    bool motorWasEnabled = motorBoard_->isMotorEnabled(motor);
+    motorBoard_->zeroCurrentPosition(motor);
     counter_positionDesired_.at(motor)->setValue(0.0);
-//    ROS_INFO("%d",motorWasEnabled);
 
-    // motors are automatically disabled after zeroing, so we must update status and then re-enable
-//    publishGetStatus();
+    // motors are automatically disabled after zeroing, so we must re-enable
     if(motorWasEnabled){
-      ROS_INFO("enable motor");
-      motorBoards_.at(0)->enableMotor(motor, true);
+      ROS_INFO("enable motor"); // BUG: removing this line causes motor to not re-enable when
+                                // the desired position is 0.
+      motorBoard_->enableMotor(motor, true);
     }
   }
 }
 
 void McbTest::publishEnableAllMotors(bool enable)
 {
-  motorBoards_.at(0)->enableAllMotors(enable);
+  motorBoard_->enableAllMotors(enable);
 }
 
 void McbTest::newDesiredPosition(int motor)
 {
-  motorBoards_.at(0)->setDesiredPosition(motor, (int32_t)counter_positionDesired_.at(motor)->value());
+  motorBoard_->setDesiredPosition(motor, (int32_t)counter_positionDesired_.at(motor)->value());
 }
 
 void McbTest::updatePositionLabels(medlab_motor_control_board::McbEncoderCurrent positions)
@@ -133,17 +132,17 @@ void McbTest::slot_newStatus()
   watchdog_ = 0;
 
   // update control effort labels
-  QVector<float> efforts = motorBoards_.at(0)->getEfforts();
+  QVector<float> efforts = motorBoard_->getEfforts();
   for(int ii=0; ii<maxMotors_; ii++){
     label_effort_.at(ii)->setText(QString::number(efforts.at(ii),'f',6));
   }
 
   // update state label
-  ui_.label_mcbState->setText((motorBoards_.at(0)->isRosControlEnabled() ? "Control" : "Idle"));
+  ui_.label_mcbState->setText((motorBoard_->isRosControlEnabled() ? "Control" : "Idle"));
 
   // update motor states
   for(int ii=0; ii<maxMotors_; ii++){
-    checkBox_motorEnable_.at(ii)->setChecked(motorBoards_.at(0)->isMotorEnabled(ii));
+    checkBox_motorEnable_.at(ii)->setChecked(motorBoard_->isMotorEnabled(ii));
   }
 }
 
@@ -201,7 +200,7 @@ void McbTest::initUiNames()
 void McbTest::shutdownPlugin()
 {
   publishEnableRos(false);
-  motorBoards_.remove(0);
+  delete motorBoard_;
   pubStatus_.shutdown();
 }
 
@@ -222,16 +221,16 @@ void McbTest::connectNode()
   ui_.label_mcbState->setText("CONNECTING...");
 
   // initialize MCB1
-  motorBoards_.push_back(new McbRos);
+  motorBoard_ = new McbRos;
   std::string nodeName = ui_.lineEdit_nodeName->text().toStdString();
-  motorBoards_.at(0)->init(nodeName);
+  motorBoard_->init(nodeName);
 
   // connect McbRos signals
-  connect(motorBoards_.at(0), SIGNAL(controlStateChanged(bool)), this, SLOT(controlStateChanged(bool)));
-  connect(motorBoards_.at(0), SIGNAL(connectionEstablished()), this, SLOT(connectionEstablished()));
-  connect(motorBoards_.at(0), SIGNAL(connectionLost()), this, SLOT(connectionLost()));
-  connect(motorBoards_.at(0), SIGNAL(newPositions(medlab_motor_control_board::McbEncoderCurrent)), this, SLOT(updatePositionLabels(medlab_motor_control_board::McbEncoderCurrent)));
-  connect(motorBoards_.at(0), SIGNAL(newStatus()), this, SLOT(slot_newStatus()));
+  connect(motorBoard_, SIGNAL(controlStateChanged(bool)), this, SLOT(controlStateChanged(bool)));
+  connect(motorBoard_, SIGNAL(connectionEstablished()), this, SLOT(connectionEstablished()));
+  connect(motorBoard_, SIGNAL(connectionLost()), this, SLOT(connectionLost()));
+  connect(motorBoard_, SIGNAL(newPositions(medlab_motor_control_board::McbEncoderCurrent)), this, SLOT(updatePositionLabels(medlab_motor_control_board::McbEncoderCurrent)));
+  connect(motorBoard_, SIGNAL(newStatus()), this, SLOT(slot_newStatus()));
 
   // start timer to regularly request status
   std::string topicGetStatus = "/" + nodeName + "/get_status";
@@ -254,8 +253,8 @@ void McbTest::connectionEstablished()
   connect(ui_.button_connectNode, SIGNAL(pressed()), this, SLOT(connectionLost()));
 
   // display IP and MAC addresses
-  ui_.label_ip->setText(motorBoards_.at(0)->getIp());
-  ui_.label_mac->setText(motorBoards_.at(0)->getMac());
+  ui_.label_ip->setText(motorBoard_->getIp());
+  ui_.label_mac->setText(motorBoard_->getMac());
 
   // setup button_enableRosControl and ensure we are in the Idle state
   ui_.button_enableRosControl->setChecked(false);
@@ -273,7 +272,7 @@ void McbTest::connectionLost()
   controlStateChanged(false);
 
   // remove motor board node
-  motorBoards_.remove(0);
+  delete motorBoard_;
 
   // change disconnect button to connect
   ui_.button_connectNode->setText("Connect");
@@ -289,7 +288,7 @@ void McbTest::connectionLost()
 void McbTest::slot_motorStateChanged(int motor)
 {
   // check current motor state
-  bool enabled = motorBoards_.at(0)->isMotorEnabled(motor);
+  bool enabled = motorBoard_->isMotorEnabled(motor);
 
   // effectively enables/disables counter
   counter_positionDesired_.at(motor)->setSingleStep((enabled ? 1.0 : 0.0));
@@ -299,13 +298,13 @@ void McbTest::controlStateChanged(bool controlState)
 {
   if(controlState){
     // allow motors to be individually enabled
-    numMotorsDetected_ = motorBoards_.at(0)->getNumMotors();
+    numMotorsDetected_ = motorBoard_->getNumMotors();
     if(numMotorsDetected_ > -1){
       for(int ii=0; ii<numMotorsDetected_; ii++){
         checkBox_motorEnable_.at(ii)->setCheckable(true);
       }
     }
-    connect(motorBoards_.at(0), SIGNAL(motorStateChanged(int)), this, SLOT(slot_motorStateChanged(int)));
+    connect(motorBoard_, SIGNAL(motorStateChanged(int)), this, SLOT(slot_motorStateChanged(int)));
     ui_.button_enableRosControl->setText("Disable ROS Control");
 
     // setup buttons
