@@ -32,16 +32,19 @@ find_library(
 set(rqt_mcbtest_SRCS
   src/mcbtest.cpp
   src/mcbros.cpp
+  src/gainsdialog.cpp
 )
 
 set(rqt_mcbtest_HDRS
   include/mcbtest.h
   include/mcbros.h
+  include/gainsdialog.h
 )
 
 set(rqt_mcbtest_UIS
 #  src/mcbtest.ui
   src/mcb_gui.ui
+  src/gainsdialog.ui
 )
 
 set(rqt_mcbtest_QRCS

@@ -1,4 +1,5 @@
 ﻿#include <mcbtest.h>
+#include <gainsdialog.h>
 #include <pluginlib/class_list_macros.h>
 #include <QStringList>
 #include <QString>
@@ -18,9 +19,11 @@ namespace rqt_mcbtest {
 McbTest::McbTest()
   : rqt_gui_cpp::Plugin()
   , widget_(0)
+  , numMotorsDetected_(-1)
   , maxMotors_(6)
   , statusTimerInterval_(0.05)
   , watchdogLimit_(100)
+  , watchdog_(0)
 {
   // Constructor is called first before initPlugin function, needless to say.
 
@@ -49,7 +52,7 @@ void McbTest::initPlugin(qt_gui_cpp::PluginContext& context)
   // map the counter_positionDesired signals to a single slot
   QSignalMapper *signalMapperCounter = new QSignalMapper(this);
   connect(signalMapperCounter, SIGNAL(mapped(int)), this, SLOT(newDesiredPosition(int)));
-  for(int ii=0; ii<maxMotors_; ii++){
+  for(int ii=0; ii<counter_positionDesired_.size(); ii++){
     signalMapperCounter->setMapping(counter_positionDesired_.at(ii), ii);
     connect(counter_positionDesired_.at(ii), SIGNAL(valueChanged(double)), signalMapperCounter, SLOT(map()));
   }
@@ -57,7 +60,7 @@ void McbTest::initPlugin(qt_gui_cpp::PluginContext& context)
   // map the checkBox_motorEnable signals to a single slot
   QSignalMapper *signalMapperCheckboxMotorEnable_ = new QSignalMapper(this);
   connect(signalMapperCheckboxMotorEnable_, SIGNAL(mapped(int)), this, SLOT(slot_checkBox_motorEnable(int)));
-  for(int ii=0; ii<maxMotors_; ii++){
+  for(int ii=0; ii<checkBox_motorEnable_.size(); ii++){
     signalMapperCheckboxMotorEnable_->setMapping(checkBox_motorEnable_.at(ii), ii);
     connect(checkBox_motorEnable_.at(ii), SIGNAL(clicked()), signalMapperCheckboxMotorEnable_, SLOT(map()));
   }
@@ -65,7 +68,7 @@ void McbTest::initPlugin(qt_gui_cpp::PluginContext& context)
   // map the button_zeroEncoder signals to a single slot
   QSignalMapper *signalMapperZeroEncoder = new QSignalMapper(this);
   connect(signalMapperZeroEncoder, SIGNAL(mapped(int)), this, SLOT(zeroCurrentPosition(int)));
-  for(int ii=0; ii<maxMotors_; ii++){
+  for(int ii=0; ii<button_zeroEncoder_.size(); ii++){
     signalMapperZeroEncoder->setMapping(button_zeroEncoder_.at(ii), ii);
     connect(button_zeroEncoder_.at(ii), SIGNAL(pressed()), signalMapperZeroEncoder, SLOT(map()));
   }
@@ -109,7 +112,7 @@ void McbTest::zeroCurrentPosition(int motor)
     // motors are automatically disabled after zeroing, so we must re-enable
     if(motorWasEnabled){
       ROS_INFO("enable motor"); // BUG: removing this line causes motor to not re-enable when
-                                // the desired position is 0.
+                                // the desired position is set to 0.
       motorBoard_->enableMotor(motor, true);
     }
   }
@@ -165,6 +168,24 @@ void McbTest::slot_limitSwitchEvent(int motor, bool state)
   }
 }
 
+void McbTest::setGainsDialog(int motor)
+{
+  // get the current gain values
+  double p = motorBoard_->getP(motor);
+  double i = motorBoard_->getI(motor);
+  double d = motorBoard_->getD(motor);
+
+  // create popup dialog
+  GainsDialog *gainsWindow = new GainsDialog(motor, p, i, d);
+  gainsWindow->setModal(true); // lock main gui until dialog closed
+
+  // connect newGains signal to setGains slot
+  connect(gainsWindow, SIGNAL(newGains(quint8,double,double,double)), motorBoard_, SLOT(setGains(quint8,double,double,double)));
+
+  // open dialog window
+  gainsWindow->show();
+}
+
 void McbTest::initUiNames()
 {
   label_positionCurrent_.reserve(maxMotors_);
@@ -199,6 +220,14 @@ void McbTest::initUiNames()
   button_zeroEncoder_.push_back(ui_.button_zeroEncoder4);
   button_zeroEncoder_.push_back(ui_.button_zeroEncoder5);
 
+  button_pid_.reserve(maxMotors_);
+  button_pid_.push_back(ui_.button_pid0);
+  button_pid_.push_back(ui_.button_pid1);
+  button_pid_.push_back(ui_.button_pid2);
+  button_pid_.push_back(ui_.button_pid3);
+  button_pid_.push_back(ui_.button_pid4);
+  button_pid_.push_back(ui_.button_pid5);
+
   label_limit_.reserve(maxMotors_);
   label_limit_.push_back(ui_.label_limit0);
   label_limit_.push_back(ui_.label_limit1);
@@ -219,8 +248,8 @@ void McbTest::initUiNames()
 void McbTest::shutdownPlugin()
 {
   publishEnableRos(false);
-  delete motorBoard_;
   pubStatus_.shutdown();
+  delete motorBoard_;
 }
 
 void McbTest::saveSettings(qt_gui_cpp::Settings& plugin_settings, qt_gui_cpp::Settings& instance_settings) const
@@ -280,6 +309,14 @@ void McbTest::connectionEstablished()
   ui_.button_enableRosControl->setChecked(false);
   connect(ui_.button_enableRosControl, SIGNAL(toggled(bool)), this, SLOT(publishEnableRos(bool)));
   publishEnableRos(false);
+
+  // connect buttons for setting PID gains
+  QSignalMapper *signalMapperPid = new QSignalMapper(this);
+  connect(signalMapperPid, SIGNAL(mapped(int)), this, SLOT(setGainsDialog(int)));
+  for(int ii=0; ii<button_pid_.size(); ii++){
+    signalMapperPid->setMapping(button_pid_.at(ii), ii);
+    connect(button_pid_.at(ii), SIGNAL(pressed()), signalMapperPid, SLOT(map()));
+  }
 }
 
 void McbTest::connectionLost()
@@ -298,6 +335,11 @@ void McbTest::connectionLost()
   ui_.button_connectNode->setText("Connect");
   ui_.button_connectNode->disconnect();
   connect(ui_.button_connectNode, SIGNAL(pressed()), this, SLOT(connectNode()));
+
+  // disable pid gains buttons
+  for(int ii=0; ii<button_pid_.size(); ii++){
+    button_pid_.at(ii)->disconnect();
+  }
 
   // update labels
   ui_.label_mcbState->setText("DISCONNECTED");

@@ -18,6 +18,7 @@
 
 
 McbRos::McbRos()
+  : connected_(false)
 {
   // register data types used in signals/slots
   qRegisterMetaType< QVector<bool> >();
@@ -61,6 +62,10 @@ bool McbRos::init(std::string nodeName)
   // setup pubEncoderCommand_
   std::string topicEncoderCommand = "/" + nodeName_+ "/encoder_command";
   pubEncoderCommand_ = nh_.advertise<medlab_motor_control_board::McbEncoders>(topicEncoderCommand.c_str(),1);
+
+  // setup pubSetGains_
+  std::string topicSetGains = "/" + nodeName_+ "/set_gains";
+  pubSetGains_ = nh_.advertise<medlab_motor_control_board::McbGains>(topicSetGains.c_str(),1);
 
   // setup subStatus_
   std::string topicStatus = "/" + nodeName + "/status";
@@ -186,9 +191,57 @@ bool McbRos::zeroCurrentPositions(void)
   return success;
 }
 
-bool McbRos::setPid(uint8_t motor, float p, float i, float d)
+bool McbRos::setGains(quint8 motor, double p, double i, double d)
 {
+  bool success = false;
 
+  if(connected_ && (motor < getNumMotors())){
+    medlab_motor_control_board::McbGains msg;
+
+    msg.motor = motor;
+    msg.p = p;
+    msg.i = i;
+    msg.d = d;
+
+    pubSetGains_.publish(msg);
+
+    success = true;
+  }
+
+  return success;
+}
+
+double McbRos::getP(uint8_t motor)
+{
+  double p = 0.0;
+
+  if(connected_ && (motor<getNumMotors())){
+    p = currentStatus_.p[motor];
+  }
+
+  return p;
+}
+
+double McbRos::getI(uint8_t motor)
+{
+  double i = 0.0;
+
+  if(connected_ && (motor<getNumMotors())){
+    i = currentStatus_.i[motor];
+  }
+
+  return i;
+}
+
+double McbRos::getD(uint8_t motor)
+{
+  double d = 0.0;
+
+  if(connected_ && (motor<getNumMotors())){
+    d = currentStatus_.d[motor];
+  }
+
+  return d;
 }
 
 int McbRos::getNumMotors(void)
@@ -208,7 +261,10 @@ QString McbRos::getIp(void)
 
   if(connected_){
     // convert IP address to a string
-    ip = QString::number(currentStatus_.ip[0]) + "." + QString::number(currentStatus_.ip[1]) + "." + QString::number(currentStatus_.ip[2]) + "." + QString::number(currentStatus_.ip[3]);
+    ip =  QString::number(currentStatus_.ip[0]) + "."
+        + QString::number(currentStatus_.ip[1]) + "."
+        + QString::number(currentStatus_.ip[2]) + "."
+        + QString::number(currentStatus_.ip[3]);
   }
 
   return ip;
@@ -220,7 +276,12 @@ QString McbRos::getMac(void)
 
   if(connected_){
     // convert IP address to a hex string
-    mac = QString::number(currentStatus_.mac[0],16).toUpper() + ":" + QString::number(currentStatus_.mac[1],16).toUpper() + ":" + QString::number(currentStatus_.mac[2],16).toUpper() + ":" + QString::number(currentStatus_.mac[3],16).toUpper() + ":" + QString::number(currentStatus_.mac[4],16).toUpper() + ":" + QString::number(currentStatus_.mac[5],16).toUpper();
+    mac = QString::number(currentStatus_.mac[0],16).toUpper().rightJustified(2,'0') + ":"
+        + QString::number(currentStatus_.mac[1],16).toUpper().rightJustified(2,'0') + ":"
+        + QString::number(currentStatus_.mac[2],16).toUpper().rightJustified(2,'0') + ":"
+        + QString::number(currentStatus_.mac[3],16).toUpper().rightJustified(2,'0') + ":"
+        + QString::number(currentStatus_.mac[4],16).toUpper().rightJustified(2,'0') + ":"
+        + QString::number(currentStatus_.mac[5],16).toUpper().rightJustified(2,'0');
   }
 
   return mac;

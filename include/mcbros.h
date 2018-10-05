@@ -34,8 +34,10 @@ public:
   QVector<float> getEfforts(void);
   bool zeroCurrentPosition(uint8_t motor); // zeroes encoder count of a single motor
   bool zeroCurrentPositions(void); // zeroes encoder count for all motors
-  bool setPid(uint8_t motor, float p, float i, float d);
-  int  getNumMotors(void);
+  double getP(uint8_t motor); // returns Kp gain value from the latest status
+  double getI(uint8_t motor); // returns Ki gain value from the latest status
+  double getD(uint8_t motor); // returns Kd gain value from the latest status
+  int  getNumMotors(void); // returns number of detected motor modules
   QString getIp(void);   // returns IP address via uint8_t[4]
   QString getMac(void); // returns MAC address via uint8_t[6]
   bool isRosControlEnabled(void); // NOTE: may not be accurate if state has changed since last status query
@@ -43,6 +45,7 @@ public:
 
 public slots:
   bool requestStatus(void);
+  bool setGains(quint8 motor, double p, double i, double d);
 
 private:
   std::string nodeName_;
@@ -59,7 +62,7 @@ private:
   ros::Subscriber subEncoderCurrent_;
   ros::Subscriber subLimitSwitchEvent_;
 
-  bool connected_ = false; // true after first status message received
+  bool connected_; // true after first status message received
   bool currentControlState_; // 0 => ROS Idle; 1 => ROS Control
   medlab_motor_control_board::McbStatus currentStatus_; // most recently received status
   medlab_motor_control_board::McbEncoderCurrent encoderCurrent_; // measured and desired positions

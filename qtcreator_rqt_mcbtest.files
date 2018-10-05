@@ -13,3 +13,7 @@ src/mcb_gui.ui
 resource/mcb_gui_qrc.qrc
 src/mcb_gui_resources.qrc
 src/mcb_gui_resources.qrc
+src/gainsdialog.h
+src/gainsdialog.cpp
+src/gainsdialog.ui
+include/gainsdialog.h

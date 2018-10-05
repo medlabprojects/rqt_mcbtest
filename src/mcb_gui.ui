@@ -6,18 +6,33 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>665</width>
-    <height>433</height>
+    <width>730</width>
+    <height>400</height>
    </rect>
   </property>
   <property name="sizePolicy">
-   <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
+   <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
     <horstretch>0</horstretch>
     <verstretch>0</verstretch>
    </sizepolicy>
   </property>
+  <property name="minimumSize">
+   <size>
+    <width>730</width>
+    <height>380</height>
+   </size>
+  </property>
+  <property name="maximumSize">
+   <size>
+    <width>730</width>
+    <height>400</height>
+   </size>
+  </property>
   <property name="windowTitle">
    <string>MCB_GUI</string>
+  </property>
+  <property name="autoFillBackground">
+   <bool>false</bool>
   </property>
   <layout class="QVBoxLayout" name="verticalLayout">
    <item>
@@ -81,6 +96,29 @@
        </property>
        <property name="checkable">
         <bool>true</bool>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <spacer name="horizontalSpacer_4">
+       <property name="orientation">
+        <enum>Qt::Horizontal</enum>
+       </property>
+       <property name="sizeType">
+        <enum>QSizePolicy::Fixed</enum>
+       </property>
+       <property name="sizeHint" stdset="0">
+        <size>
+         <width>20</width>
+         <height>20</height>
+        </size>
+       </property>
+      </spacer>
+     </item>
+     <item>
+      <widget class="QPushButton" name="button_getStatus">
+       <property name="text">
+        <string>Manually Update Status</string>
        </property>
       </widget>
      </item>
@@ -212,6 +250,31 @@
    </item>
    <item>
     <layout class="QGridLayout" name="gridLayout">
+     <item row="0" column="2">
+      <widget class="QLabel" name="label_currentPosition">
+       <property name="minimumSize">
+        <size>
+         <width>0</width>
+         <height>40</height>
+        </size>
+       </property>
+       <property name="maximumSize">
+        <size>
+         <width>110</width>
+         <height>16777215</height>
+        </size>
+       </property>
+       <property name="text">
+        <string>Current Position</string>
+       </property>
+       <property name="alignment">
+        <set>Qt::AlignCenter</set>
+       </property>
+       <property name="wordWrap">
+        <bool>false</bool>
+       </property>
+      </widget>
+     </item>
      <item row="3" column="2">
       <layout class="QHBoxLayout" name="horizontalLayout_16">
        <item>
@@ -253,6 +316,16 @@
      </item>
      <item row="6" column="1">
       <widget class="Line" name="line_8">
+       <property name="frameShadow">
+        <enum>QFrame::Plain</enum>
+       </property>
+       <property name="orientation">
+        <enum>Qt::Vertical</enum>
+       </property>
+      </widget>
+     </item>
+     <item row="2" column="3">
+      <widget class="Line" name="line">
        <property name="frameShadow">
         <enum>QFrame::Plain</enum>
        </property>
@@ -321,25 +394,6 @@
         </spacer>
        </item>
       </layout>
-     </item>
-     <item row="0" column="2">
-      <widget class="QLabel" name="label_currentPosition">
-       <property name="minimumSize">
-        <size>
-         <width>0</width>
-         <height>40</height>
-        </size>
-       </property>
-       <property name="text">
-        <string>Current Position</string>
-       </property>
-       <property name="alignment">
-        <set>Qt::AlignCenter</set>
-       </property>
-       <property name="wordWrap">
-        <bool>true</bool>
-       </property>
-      </widget>
      </item>
      <item row="0" column="6">
       <widget class="QLabel" name="label_limitSwitch">
@@ -487,13 +541,13 @@
          </property>
          <property name="minimumSize">
           <size>
-           <width>60</width>
+           <width>65</width>
            <height>25</height>
           </size>
          </property>
          <property name="maximumSize">
           <size>
-           <width>60</width>
+           <width>65</width>
            <height>30</height>
           </size>
          </property>
@@ -601,6 +655,16 @@
        </property>
       </widget>
      </item>
+     <item row="2" column="1">
+      <widget class="Line" name="line_2">
+       <property name="frameShadow">
+        <enum>QFrame::Plain</enum>
+       </property>
+       <property name="orientation">
+        <enum>Qt::Vertical</enum>
+       </property>
+      </widget>
+     </item>
      <item row="7" column="0">
       <widget class="QCheckBox" name="checkBox_motorEnable5">
        <property name="text">
@@ -611,8 +675,8 @@
        </property>
       </widget>
      </item>
-     <item row="2" column="3">
-      <widget class="Line" name="line">
+     <item row="2" column="7">
+      <widget class="Line" name="line_7">
        <property name="frameShadow">
         <enum>QFrame::Plain</enum>
        </property>
@@ -621,8 +685,8 @@
        </property>
       </widget>
      </item>
-     <item row="2" column="1">
-      <widget class="Line" name="line_2">
+     <item row="2" column="5">
+      <widget class="Line" name="line_3">
        <property name="frameShadow">
         <enum>QFrame::Plain</enum>
        </property>
@@ -659,13 +723,13 @@
          </property>
          <property name="minimumSize">
           <size>
-           <width>60</width>
+           <width>65</width>
            <height>25</height>
           </size>
          </property>
          <property name="maximumSize">
           <size>
-           <width>60</width>
+           <width>65</width>
            <height>30</height>
           </size>
          </property>
@@ -709,18 +773,8 @@
        </item>
       </layout>
      </item>
-     <item row="2" column="7">
-      <widget class="Line" name="line_7">
-       <property name="frameShadow">
-        <enum>QFrame::Plain</enum>
-       </property>
-       <property name="orientation">
-        <enum>Qt::Vertical</enum>
-       </property>
-      </widget>
-     </item>
-     <item row="2" column="5">
-      <widget class="Line" name="line_3">
+     <item row="4" column="1">
+      <widget class="Line" name="line_5">
        <property name="frameShadow">
         <enum>QFrame::Plain</enum>
        </property>
@@ -791,8 +845,18 @@
        </property>
       </widget>
      </item>
-     <item row="4" column="1">
-      <widget class="Line" name="line_5">
+     <item row="3" column="1">
+      <widget class="Line" name="line_4">
+       <property name="frameShadow">
+        <enum>QFrame::Plain</enum>
+       </property>
+       <property name="orientation">
+        <enum>Qt::Vertical</enum>
+       </property>
+      </widget>
+     </item>
+     <item row="7" column="1">
+      <widget class="Line" name="line_17">
        <property name="frameShadow">
         <enum>QFrame::Plain</enum>
        </property>
@@ -832,8 +896,8 @@
        </property>
       </widget>
      </item>
-     <item row="3" column="1">
-      <widget class="Line" name="line_4">
+     <item row="4" column="7">
+      <widget class="Line" name="line_59">
        <property name="frameShadow">
         <enum>QFrame::Plain</enum>
        </property>
@@ -881,28 +945,18 @@
        </item>
       </layout>
      </item>
-     <item row="7" column="1">
-      <widget class="Line" name="line_17">
-       <property name="frameShadow">
-        <enum>QFrame::Plain</enum>
-       </property>
-       <property name="orientation">
-        <enum>Qt::Vertical</enum>
-       </property>
-      </widget>
-     </item>
-     <item row="4" column="7">
-      <widget class="Line" name="line_59">
-       <property name="frameShadow">
-        <enum>QFrame::Plain</enum>
-       </property>
-       <property name="orientation">
-        <enum>Qt::Vertical</enum>
-       </property>
-      </widget>
-     </item>
      <item row="4" column="3">
       <widget class="Line" name="line_37">
+       <property name="frameShadow">
+        <enum>QFrame::Plain</enum>
+       </property>
+       <property name="orientation">
+        <enum>Qt::Vertical</enum>
+       </property>
+      </widget>
+     </item>
+     <item row="7" column="7">
+      <widget class="Line" name="line_85">
        <property name="frameShadow">
         <enum>QFrame::Plain</enum>
        </property>
@@ -926,13 +980,13 @@
          </property>
          <property name="minimumSize">
           <size>
-           <width>60</width>
+           <width>65</width>
            <height>25</height>
           </size>
          </property>
          <property name="maximumSize">
           <size>
-           <width>60</width>
+           <width>65</width>
            <height>30</height>
           </size>
          </property>
@@ -984,6 +1038,12 @@
          <height>0</height>
         </size>
        </property>
+       <property name="maximumSize">
+        <size>
+         <width>130</width>
+         <height>16777215</height>
+        </size>
+       </property>
        <property name="text">
         <string>Control Effort (±10V range)</string>
        </property>
@@ -995,8 +1055,8 @@
        </property>
       </widget>
      </item>
-     <item row="7" column="7">
-      <widget class="Line" name="line_85">
+     <item row="5" column="1">
+      <widget class="Line" name="line_6">
        <property name="frameShadow">
         <enum>QFrame::Plain</enum>
        </property>
@@ -1006,7 +1066,7 @@
       </widget>
      </item>
      <item row="4" column="8">
-      <widget class="QPushButton" name="button_pid0_8">
+      <widget class="QPushButton" name="button_pid2">
        <property name="sizePolicy">
         <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
          <horstretch>0</horstretch>
@@ -1039,13 +1099,13 @@
          </property>
          <property name="minimumSize">
           <size>
-           <width>60</width>
+           <width>65</width>
            <height>25</height>
           </size>
          </property>
          <property name="maximumSize">
           <size>
-           <width>60</width>
+           <width>65</width>
            <height>30</height>
           </size>
          </property>
@@ -1189,28 +1249,8 @@
        </item>
       </layout>
      </item>
-     <item row="5" column="1">
-      <widget class="Line" name="line_6">
-       <property name="frameShadow">
-        <enum>QFrame::Plain</enum>
-       </property>
-       <property name="orientation">
-        <enum>Qt::Vertical</enum>
-       </property>
-      </widget>
-     </item>
      <item row="6" column="7">
       <widget class="Line" name="line_61">
-       <property name="frameShadow">
-        <enum>QFrame::Plain</enum>
-       </property>
-       <property name="orientation">
-        <enum>Qt::Vertical</enum>
-       </property>
-      </widget>
-     </item>
-     <item row="3" column="3">
-      <widget class="Line" name="line_36">
        <property name="frameShadow">
         <enum>QFrame::Plain</enum>
        </property>
@@ -1229,8 +1269,28 @@
        </property>
       </widget>
      </item>
+     <item row="3" column="3">
+      <widget class="Line" name="line_36">
+       <property name="frameShadow">
+        <enum>QFrame::Plain</enum>
+       </property>
+       <property name="orientation">
+        <enum>Qt::Vertical</enum>
+       </property>
+      </widget>
+     </item>
      <item row="5" column="3">
       <widget class="Line" name="line_38">
+       <property name="frameShadow">
+        <enum>QFrame::Plain</enum>
+       </property>
+       <property name="orientation">
+        <enum>Qt::Vertical</enum>
+       </property>
+      </widget>
+     </item>
+     <item row="5" column="7">
+      <widget class="Line" name="line_60">
        <property name="frameShadow">
         <enum>QFrame::Plain</enum>
        </property>
@@ -1300,8 +1360,8 @@
        </item>
       </layout>
      </item>
-     <item row="5" column="7">
-      <widget class="Line" name="line_60">
+     <item row="6" column="5">
+      <widget class="Line" name="line_56">
        <property name="frameShadow">
         <enum>QFrame::Plain</enum>
        </property>
@@ -1356,13 +1416,13 @@
          </property>
          <property name="minimumSize">
           <size>
-           <width>60</width>
+           <width>65</width>
            <height>25</height>
           </size>
          </property>
          <property name="maximumSize">
           <size>
-           <width>60</width>
+           <width>65</width>
            <height>30</height>
           </size>
          </property>
@@ -1406,8 +1466,18 @@
        </item>
       </layout>
      </item>
+     <item row="7" column="5">
+      <widget class="Line" name="line_57">
+       <property name="frameShadow">
+        <enum>QFrame::Plain</enum>
+       </property>
+       <property name="orientation">
+        <enum>Qt::Vertical</enum>
+       </property>
+      </widget>
+     </item>
      <item row="5" column="8">
-      <widget class="QPushButton" name="button_pid0_9">
+      <widget class="QPushButton" name="button_pid3">
        <property name="sizePolicy">
         <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
          <horstretch>0</horstretch>
@@ -1425,28 +1495,18 @@
        </property>
       </widget>
      </item>
-     <item row="6" column="5">
-      <widget class="Line" name="line_56">
-       <property name="frameShadow">
-        <enum>QFrame::Plain</enum>
-       </property>
-       <property name="orientation">
-        <enum>Qt::Vertical</enum>
-       </property>
-      </widget>
-     </item>
-     <item row="7" column="5">
-      <widget class="Line" name="line_57">
-       <property name="frameShadow">
-        <enum>QFrame::Plain</enum>
-       </property>
-       <property name="orientation">
-        <enum>Qt::Vertical</enum>
-       </property>
-      </widget>
-     </item>
      <item row="5" column="5">
       <widget class="Line" name="line_55">
+       <property name="frameShadow">
+        <enum>QFrame::Plain</enum>
+       </property>
+       <property name="orientation">
+        <enum>Qt::Vertical</enum>
+       </property>
+      </widget>
+     </item>
+     <item row="6" column="3">
+      <widget class="Line" name="line_51">
        <property name="frameShadow">
         <enum>QFrame::Plain</enum>
        </property>
@@ -1533,18 +1593,8 @@
        </item>
       </layout>
      </item>
-     <item row="6" column="3">
-      <widget class="Line" name="line_51">
-       <property name="frameShadow">
-        <enum>QFrame::Plain</enum>
-       </property>
-       <property name="orientation">
-        <enum>Qt::Vertical</enum>
-       </property>
-      </widget>
-     </item>
      <item row="7" column="8">
-      <widget class="QPushButton" name="button_pid0_11">
+      <widget class="QPushButton" name="button_pid5">
        <property name="sizePolicy">
         <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
          <horstretch>0</horstretch>
@@ -1562,8 +1612,18 @@
        </property>
       </widget>
      </item>
+     <item row="3" column="7">
+      <widget class="Line" name="line_58">
+       <property name="frameShadow">
+        <enum>QFrame::Plain</enum>
+       </property>
+       <property name="orientation">
+        <enum>Qt::Vertical</enum>
+       </property>
+      </widget>
+     </item>
      <item row="6" column="8">
-      <widget class="QPushButton" name="button_pid0_10">
+      <widget class="QPushButton" name="button_pid4">
        <property name="sizePolicy">
         <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
          <horstretch>0</horstretch>
@@ -1612,8 +1672,8 @@
        </property>
       </widget>
      </item>
-     <item row="3" column="7">
-      <widget class="Line" name="line_58">
+     <item row="4" column="5">
+      <widget class="Line" name="line_54">
        <property name="frameShadow">
         <enum>QFrame::Plain</enum>
        </property>
@@ -1683,8 +1743,18 @@
        </item>
       </layout>
      </item>
+     <item row="5" column="9">
+      <widget class="Line" name="line_143">
+       <property name="frameShadow">
+        <enum>QFrame::Plain</enum>
+       </property>
+       <property name="orientation">
+        <enum>Qt::Vertical</enum>
+       </property>
+      </widget>
+     </item>
      <item row="3" column="8">
-      <widget class="QPushButton" name="button_pid0_7">
+      <widget class="QPushButton" name="button_pid1">
        <property name="sizePolicy">
         <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
          <horstretch>0</horstretch>
@@ -1702,8 +1772,8 @@
        </property>
       </widget>
      </item>
-     <item row="4" column="5">
-      <widget class="Line" name="line_54">
+     <item row="3" column="5">
+      <widget class="Line" name="line_53">
        <property name="frameShadow">
         <enum>QFrame::Plain</enum>
        </property>
@@ -1712,8 +1782,8 @@
        </property>
       </widget>
      </item>
-     <item row="5" column="9">
-      <widget class="Line" name="line_143">
+     <item row="2" column="9">
+      <widget class="Line" name="line_89">
        <property name="frameShadow">
         <enum>QFrame::Plain</enum>
        </property>
@@ -1737,13 +1807,13 @@
          </property>
          <property name="minimumSize">
           <size>
-           <width>60</width>
+           <width>65</width>
            <height>25</height>
           </size>
          </property>
          <property name="maximumSize">
           <size>
-           <width>60</width>
+           <width>65</width>
            <height>30</height>
           </size>
          </property>
@@ -1787,28 +1857,28 @@
        </item>
       </layout>
      </item>
-     <item row="3" column="5">
-      <widget class="Line" name="line_53">
-       <property name="frameShadow">
-        <enum>QFrame::Plain</enum>
-       </property>
-       <property name="orientation">
-        <enum>Qt::Vertical</enum>
-       </property>
-      </widget>
-     </item>
-     <item row="2" column="9">
-      <widget class="Line" name="line_89">
-       <property name="frameShadow">
-        <enum>QFrame::Plain</enum>
-       </property>
-       <property name="orientation">
-        <enum>Qt::Vertical</enum>
-       </property>
-      </widget>
-     </item>
      <item row="3" column="9">
       <widget class="Line" name="line_115">
+       <property name="frameShadow">
+        <enum>QFrame::Plain</enum>
+       </property>
+       <property name="orientation">
+        <enum>Qt::Vertical</enum>
+       </property>
+      </widget>
+     </item>
+     <item row="6" column="9">
+      <widget class="Line" name="line_144">
+       <property name="frameShadow">
+        <enum>QFrame::Plain</enum>
+       </property>
+       <property name="orientation">
+        <enum>Qt::Vertical</enum>
+       </property>
+      </widget>
+     </item>
+     <item row="4" column="9">
+      <widget class="Line" name="line_142">
        <property name="frameShadow">
         <enum>QFrame::Plain</enum>
        </property>
@@ -1939,28 +2009,48 @@
        </item>
       </layout>
      </item>
-     <item row="6" column="9">
-      <widget class="Line" name="line_144">
-       <property name="frameShadow">
-        <enum>QFrame::Plain</enum>
-       </property>
-       <property name="orientation">
-        <enum>Qt::Vertical</enum>
-       </property>
-      </widget>
-     </item>
-     <item row="4" column="9">
-      <widget class="Line" name="line_142">
-       <property name="frameShadow">
-        <enum>QFrame::Plain</enum>
-       </property>
-       <property name="orientation">
-        <enum>Qt::Vertical</enum>
-       </property>
-      </widget>
-     </item>
      <item row="7" column="9">
       <widget class="Line" name="line_203">
+       <property name="frameShadow">
+        <enum>QFrame::Plain</enum>
+       </property>
+       <property name="orientation">
+        <enum>Qt::Vertical</enum>
+       </property>
+      </widget>
+     </item>
+     <item row="0" column="3">
+      <widget class="Line" name="line_9">
+       <property name="frameShadow">
+        <enum>QFrame::Plain</enum>
+       </property>
+       <property name="orientation">
+        <enum>Qt::Vertical</enum>
+       </property>
+      </widget>
+     </item>
+     <item row="0" column="7">
+      <widget class="Line" name="line_23">
+       <property name="frameShadow">
+        <enum>QFrame::Plain</enum>
+       </property>
+       <property name="orientation">
+        <enum>Qt::Vertical</enum>
+       </property>
+      </widget>
+     </item>
+     <item row="0" column="9">
+      <widget class="Line" name="line_24">
+       <property name="frameShadow">
+        <enum>QFrame::Plain</enum>
+       </property>
+       <property name="orientation">
+        <enum>Qt::Vertical</enum>
+       </property>
+      </widget>
+     </item>
+     <item row="0" column="5">
+      <widget class="Line" name="line_10">
        <property name="frameShadow">
         <enum>QFrame::Plain</enum>
        </property>
@@ -2127,26 +2217,6 @@
       </spacer>
      </item>
     </layout>
-   </item>
-   <item>
-    <widget class="QPushButton" name="button_getStatus">
-     <property name="text">
-      <string>Manually Update Status</string>
-     </property>
-    </widget>
-   </item>
-   <item>
-    <spacer name="verticalSpacer_4">
-     <property name="orientation">
-      <enum>Qt::Vertical</enum>
-     </property>
-     <property name="sizeHint" stdset="0">
-      <size>
-       <width>20</width>
-       <height>40</height>
-      </size>
-     </property>
-    </spacer>
    </item>
   </layout>
  </widget>

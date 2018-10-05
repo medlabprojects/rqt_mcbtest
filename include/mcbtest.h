@@ -51,6 +51,7 @@ protected slots:
   void updatePositionLabels(medlab_motor_control_board::McbEncoderCurrent positions);
   void slot_newStatus(void); // connected to McbRos::newStatus() signal
   void slot_limitSwitchEvent(int motor, bool state);
+  void setGainsDialog(int motor);
 
 
 private:
@@ -60,6 +61,7 @@ private:
   QVector< QwtCounter* > counter_positionDesired_;
   QVector< QCheckBox* > checkBox_motorEnable_;
   QVector< QPushButton* > button_zeroEncoder_;
+  QVector< QPushButton* > button_pid_;
   QVector< QLabel* > label_limit_;
   QVector< QLabel* > label_effort_;
   QWidget* widget_;
@@ -70,13 +72,13 @@ private:
   double statusTimerInterval_;
   ros::Publisher pubStatus_;
   void callbackStatusTimer(const ros::TimerEvent &e);
-  int watchdog_ = 0; // counts the number of status requests since the last response
+  int watchdog_; // counts the number of status requests since the last response
   const int watchdogLimit_; // number of status requests without response before emitting connectionLost()
 
   void publishEnableAllMotors(bool enable);
   void initUiNames(void);
   const uint8_t maxMotors_;
-  int numMotorsDetected_ = -1;
+  int numMotorsDetected_;
 };
 } // namespace
 #endif // my_namespace__my_plugin_H
