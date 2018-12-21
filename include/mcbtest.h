@@ -6,7 +6,7 @@
 #include "mcbros.h"
 #include <QWidget>
 #include <QVector>
-#include <vector>
+#include <memory>
 #include <QCheckBox>
 #include <QLabel>
 #include <QPushButton>
@@ -33,7 +33,6 @@ public:
   //bool hasConfiguration() const;
   //void triggerConfiguration();
 
-
 protected slots:
 
   void connectNode(void);
@@ -42,11 +41,12 @@ protected slots:
   void controlStateChanged(bool controlState);
   void slot_motorStateChanged(int motor);
   void publishEnableRos(bool enable);
-  void enableAllMotors(void);
-  void disableAllMotors(void);
+//  void enableAllMotors(void);
+//  void disableAllMotors(void);
   void slot_checkBox_motorEnable(int motor);
   void zeroCurrentPosition(int motor);
-  void publishGetStatus(void);
+  void zeroCurrentPositions();
+//  void publishGetStatus(void);
   void newDesiredPosition(int motor);
   void updatePositionLabels(medlab_motor_control_board::McbEncoderCurrent positions);
   void slot_newStatus(void); // connected to McbRos::newStatus() signal
@@ -66,14 +66,15 @@ private:
   QVector< QLabel* > label_effort_;
   QWidget* widget_;
 
-  McbRos* motorBoard_;
+//  McbRos* motorBoard_;
+  std::unique_ptr<McbRos> motorBoard_;
 
   ros::Timer statusTimer_;
   double statusTimerInterval_;
   ros::Publisher pubStatus_;
   void callbackStatusTimer(const ros::TimerEvent &e);
-  int watchdog_; // counts the number of status requests since the last response
   const int watchdogLimit_; // number of status requests without response before emitting connectionLost()
+  int watchdog_; // counts the number of status requests since the last response
 
   void publishEnableAllMotors(bool enable);
   void initUiNames(void);

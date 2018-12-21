@@ -6,6 +6,8 @@
 #include <QVector>
 #include <string>
 #include <vector>
+#include <algorithm>
+#include <iterator>
 #include "ros/ros.h"
 #include "std_msgs/Bool.h"
 #include "std_msgs/Empty.h"
@@ -150,9 +152,12 @@ bool McbRos::setDesiredPosition(int motor, int32_t position)
 QVector<float> McbRos::getEfforts(void)
 {
   QVector<float> efforts;
-  for(int ii=0; ii<6; ii++){
-    efforts.push_back(currentStatus_.control_effort[ii]);
-  }
+
+  std::copy(std::begin(currentStatus_.control_effort), std::end(currentStatus_.control_effort), efforts.begin());
+
+//  for(int ii=0; ii<6; ii++){
+//    efforts.push_back(currentStatus_.control_effort[ii]);
+//  }
 
   return efforts;
 }
@@ -160,6 +165,8 @@ QVector<float> McbRos::getEfforts(void)
 bool McbRos::setDesiredPosition(medlab_motor_control_board::McbEncoders desiredPositions)
 {
   pubEncoderCommand_.publish(desiredPositions);
+
+  return true;
 }
 
 bool McbRos::zeroCurrentPosition(uint8_t motor)
@@ -199,9 +206,9 @@ bool McbRos::setGains(quint8 motor, double p, double i, double d)
     medlab_motor_control_board::McbGains msg;
 
     msg.motor = motor;
-    msg.p = p;
-    msg.i = i;
-    msg.d = d;
+    msg.p = static_cast<float>(p);
+    msg.i = static_cast<float>(i);
+    msg.d = static_cast<float>(d);
 
     pubSetGains_.publish(msg);
 
@@ -216,7 +223,7 @@ double McbRos::getP(uint8_t motor)
   double p = 0.0;
 
   if(connected_ && (motor<getNumMotors())){
-    p = currentStatus_.p[motor];
+    p = static_cast<double>(currentStatus_.p[motor]);
   }
 
   return p;
@@ -227,7 +234,7 @@ double McbRos::getI(uint8_t motor)
   double i = 0.0;
 
   if(connected_ && (motor<getNumMotors())){
-    i = currentStatus_.i[motor];
+    i = static_cast<double>(currentStatus_.i[motor]);
   }
 
   return i;
@@ -238,21 +245,10 @@ double McbRos::getD(uint8_t motor)
   double d = 0.0;
 
   if(connected_ && (motor<getNumMotors())){
-    d = currentStatus_.d[motor];
+    d = static_cast<double>(currentStatus_.d[motor]);
   }
 
   return d;
-}
-
-int McbRos::getNumMotors(void)
-{
-  int numMotors = 0;
-
-  if(connected_){
-    numMotors = currentStatus_.number_modules;
-  }
-
-  return numMotors;
 }
 
 QString McbRos::getIp(void)
@@ -287,18 +283,13 @@ QString McbRos::getMac(void)
   return mac;
 }
 
-bool McbRos::isRosControlEnabled()
-{
-  return currentControlState_;
-}
-
 bool McbRos::isMotorEnabled(uint8_t motor)
 {
   if(isRosControlEnabled() && (motor<6)){
     return currentStatus_.motor_enabled[motor];
   }
   else{
-    return false; // FIX: should probably return -1
+    return false; // FIX: should probably return -1 to differentiate from valid, but disabled motor
   }
 }
 

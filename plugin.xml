@@ -1,17 +1,17 @@
 <library path="lib/librqt_mcbtest">
   <class name="rqt_mcbtest/McbTest" type="rqt_mcbtest::McbTest" base_class_type="rqt_gui_cpp::Plugin">
     <description>
-      A test GUI using rqt.
+      A GUI for controlling MCB.
     </description>
     <qtgui>
       <group>
         <label>MED Lab</label>
-	<icon>resource/robot_icon.png</icon>
+        <icon type="theme">go-home</icon>
         <statustip>MED Lab plugins</statustip>
       </group>
       <label>MCB Test</label>
       <icon>resource/robot_icon.png</icon>
-      <statustip>A test GUI for MCB using rqt.</statustip>
+      <statustip>A GUI for controlling MCB .</statustip>
     </qtgui>
   </class>
 </library>

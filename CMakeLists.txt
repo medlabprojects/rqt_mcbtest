@@ -2,14 +2,15 @@ cmake_minimum_required(VERSION 2.8.3)
 
 project(rqt_mcbtest)
 
+add_compile_options(-std=c++14)
+
 find_package(catkin REQUIRED COMPONENTS
-  medlab_motor_control_board
   roscpp
   rqt_gui
   rqt_gui_cpp
+  medlab_motor_control_board
 )
 
-# find_package(Qt5 COMPONENTS Core Gui REQUIRED)
 find_package(Qt5Core REQUIRED)
 find_package(Qt5Widgets REQUIRED)
 
@@ -42,7 +43,6 @@ set(rqt_mcbtest_HDRS
 )
 
 set(rqt_mcbtest_UIS
-#  src/mcbtest.ui
   src/mcb_gui.ui
   src/gainsdialog.ui
 )
@@ -53,7 +53,8 @@ set(rqt_mcbtest_QRCS
 
 set(rqt_mcbtest_INCLUDE_DIRECTORIES
   include
-  ${CMAKE_CURRENT_BINARY_DIR}
+  "${CATKIN_DEVEL_PREFIX}/${CATKIN_GLOBAL_INCLUDE_DESTINATION}"
+#  ${CMAKE_CURRENT_BINARY_DIR}
 )
 
 catkin_package(

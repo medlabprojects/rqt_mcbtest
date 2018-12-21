@@ -3,9 +3,9 @@
 #include <pluginlib/class_list_macros.h>
 #include <QStringList>
 #include <QString>
-#include <QSignalMapper>
+//#include <QSignalMapper>
 #include <QVector>
-#include <vector>
+#include <memory>
 #include <string>
 #include "ros/ros.h"
 #include <ros/console.h>
@@ -19,11 +19,12 @@ namespace rqt_mcbtest {
 McbTest::McbTest()
   : rqt_gui_cpp::Plugin()
   , widget_(0)
-  , numMotorsDetected_(-1)
-  , maxMotors_(6)
   , statusTimerInterval_(0.05)
   , watchdogLimit_(100)
   , watchdog_(0)
+  , maxMotors_(6)
+  , numMotorsDetected_(-1)
+
 {
   // Constructor is called first before initPlugin function, needless to say.
 
@@ -45,32 +46,14 @@ void McbTest::initPlugin(qt_gui_cpp::PluginContext& context)
   // assemble ui elements into QVectors for easier access
   initUiNames();
 
-  // connect signals/slots
-  connect(ui_.button_connectNode, SIGNAL(pressed()), this, SLOT(connectNode()));
-  connect(ui_.button_getStatus, SIGNAL(pressed()), this, SLOT(publishGetStatus()));
-
-  // map the counter_positionDesired signals to a single slot
-  QSignalMapper *signalMapperCounter = new QSignalMapper(this);
-  connect(signalMapperCounter, SIGNAL(mapped(int)), this, SLOT(newDesiredPosition(int)));
-  for(int ii=0; ii<counter_positionDesired_.size(); ii++){
-    signalMapperCounter->setMapping(counter_positionDesired_.at(ii), ii);
-    connect(counter_positionDesired_.at(ii), SIGNAL(valueChanged(double)), signalMapperCounter, SLOT(map()));
-  }
-
-  // map the checkBox_motorEnable signals to a single slot
-  QSignalMapper *signalMapperCheckboxMotorEnable_ = new QSignalMapper(this);
-  connect(signalMapperCheckboxMotorEnable_, SIGNAL(mapped(int)), this, SLOT(slot_checkBox_motorEnable(int)));
-  for(int ii=0; ii<checkBox_motorEnable_.size(); ii++){
-    signalMapperCheckboxMotorEnable_->setMapping(checkBox_motorEnable_.at(ii), ii);
-    connect(checkBox_motorEnable_.at(ii), SIGNAL(clicked()), signalMapperCheckboxMotorEnable_, SLOT(map()));
-  }
+  // connect gui buttons
+  connect(ui_.button_connectNode, SIGNAL(pressed()),
+          this, SLOT(connectNode()));
 
   // map the button_zeroEncoder signals to a single slot
-  QSignalMapper *signalMapperZeroEncoder = new QSignalMapper(this);
-  connect(signalMapperZeroEncoder, SIGNAL(mapped(int)), this, SLOT(zeroCurrentPosition(int)));
   for(int ii=0; ii<button_zeroEncoder_.size(); ii++){
-    signalMapperZeroEncoder->setMapping(button_zeroEncoder_.at(ii), ii);
-    connect(button_zeroEncoder_.at(ii), SIGNAL(pressed()), signalMapperZeroEncoder, SLOT(map()));
+    connect(button_zeroEncoder_[ii], &QAbstractButton::pressed,
+            this, [this, ii](){zeroCurrentPosition(ii);});
   }
 }
 
@@ -80,15 +63,15 @@ void McbTest::publishEnableRos(bool enable)
   motorBoard_->enableRosControl(enable);
 }
 
-void McbTest::enableAllMotors()
-{
-  publishEnableAllMotors(true);
-}
+//void McbTest::enableAllMotors()
+//{
+//  publishEnableAllMotors(true);
+//}
 
-void McbTest::disableAllMotors()
-{
-  publishEnableAllMotors(false);
-}
+//void McbTest::disableAllMotors()
+//{
+//  publishEnableAllMotors(false);
+//}
 
 void McbTest::slot_checkBox_motorEnable(int motor)
 {
@@ -112,20 +95,34 @@ void McbTest::zeroCurrentPosition(int motor)
     // motors are automatically disabled after zeroing, so we must re-enable
     if(motorWasEnabled){
       ROS_INFO("enable motor"); // BUG: removing this line causes motor to not re-enable when
-                                // the desired position is set to 0.
+                                // the desired position is set to 0. Messages sent too fast?
       motorBoard_->enableMotor(motor, true);
     }
   }
 }
 
+void McbTest::zeroCurrentPositions()
+{
+  for(int ii=0; ii<numMotorsDetected_; ii++){ // inefficient, but reliable and called rarely
+    zeroCurrentPosition(ii);
+  }
+}
+
 void McbTest::publishEnableAllMotors(bool enable)
 {
+  // set counters to the current positions (prevents accidentally commanding large steps)
+  auto curPositions = motorBoard_->currentPositions();
+  for(int motor=0; motor<counter_positionDesired_.size(); motor++){
+    counter_positionDesired_.at(motor)->setValue(curPositions.measured[motor]);
+  }
+
+  // publish enable message
   motorBoard_->enableAllMotors(enable);
 }
 
 void McbTest::newDesiredPosition(int motor)
 {
-  motorBoard_->setDesiredPosition(motor, (int32_t)counter_positionDesired_.at(motor)->value());
+  motorBoard_->setDesiredPosition(motor, static_cast<int32_t>(counter_positionDesired_.at(motor)->value()));
 }
 
 void McbTest::updatePositionLabels(medlab_motor_control_board::McbEncoderCurrent positions)
@@ -159,8 +156,9 @@ void McbTest::slot_limitSwitchEvent(int motor, bool state)
 {
   // check if the E-Stop was triggered
   if(motor == 6){
-    for(int ii=0; ii<maxMotors_; ii++){
-      label_limit_.at(ii)->setText("E-STOP!");
+    for(auto& label_limit : label_limit_){
+      state ? label_limit->setText("E-STOP!")
+            : label_limit->clear();
     }
   }
   else if(motor < 6){
@@ -180,7 +178,8 @@ void McbTest::setGainsDialog(int motor)
   gainsWindow->setModal(true); // lock main gui until dialog closed
 
   // connect newGains signal to setGains slot
-  connect(gainsWindow, SIGNAL(newGains(quint8,double,double,double)), motorBoard_, SLOT(setGains(quint8,double,double,double)));
+  connect(gainsWindow, SIGNAL(newGains(quint8,double,double,double)),
+          motorBoard_.get(), SLOT(setGains(quint8,double,double,double)));
 
   // open dialog window
   gainsWindow->show();
@@ -248,20 +247,31 @@ void McbTest::initUiNames()
 void McbTest::shutdownPlugin()
 {
   publishEnableRos(false);
-  pubStatus_.shutdown();
-  delete motorBoard_;
+//  pubStatus_.shutdown();
+//  delete motorBoard_;
 }
 
 void McbTest::saveSettings(qt_gui_cpp::Settings& plugin_settings, qt_gui_cpp::Settings& instance_settings) const
 {
   // TODO save intrinsic configuration, usually using:
   // instance_settings.setValue(k, v)
+
+  // save node name for next session
+  instance_settings.setValue("nodeName", ui_.lineEdit_nodeName->text());
 }
 
 void McbTest::restoreSettings(const qt_gui_cpp::Settings& plugin_settings, const qt_gui_cpp::Settings& instance_settings)
 {
   // TODO restore intrinsic configuration, usually using:
   // v = instance_settings.value(k)
+
+  // restore previous node name
+  if(instance_settings.contains("nodeName")){
+    QString nodeName = instance_settings.value("nodeName", "").toString();
+    ui_.lineEdit_nodeName->clear();
+    ui_.lineEdit_nodeName->insert(nodeName);
+  }
+
 }
 
 void McbTest::connectNode()
@@ -269,17 +279,42 @@ void McbTest::connectNode()
   ui_.label_mcbState->setText("CONNECTING...");
 
   // initialize MCB1
-  motorBoard_ = new McbRos;
+  motorBoard_ = std::make_unique<McbRos>();
   std::string nodeName = ui_.lineEdit_nodeName->text().toStdString();
   motorBoard_->init(nodeName);
 
-  // connect McbRos signals
-  connect(motorBoard_, SIGNAL(controlStateChanged(bool)), this, SLOT(controlStateChanged(bool)));
-  connect(motorBoard_, SIGNAL(connectionEstablished()), this, SLOT(connectionEstablished()));
-  connect(motorBoard_, SIGNAL(connectionLost()), this, SLOT(connectionLost()));
-  connect(motorBoard_, SIGNAL(newPositions(medlab_motor_control_board::McbEncoderCurrent)), this, SLOT(updatePositionLabels(medlab_motor_control_board::McbEncoderCurrent)));
-  connect(motorBoard_, SIGNAL(newStatus()), this, SLOT(slot_newStatus()));
-  connect(motorBoard_, SIGNAL(limitSwitchEvent(int,bool)), this, SLOT(slot_limitSwitchEvent(int,bool)));
+  // connect McbRos signals/slots
+  connect(motorBoard_.get(), SIGNAL(controlStateChanged(bool)),
+          this,        SLOT(controlStateChanged(bool)));
+
+  connect(motorBoard_.get(), SIGNAL(connectionEstablished()),
+          this,        SLOT(connectionEstablished()));
+
+  connect(motorBoard_.get(), SIGNAL(connectionLost()),
+          this,        SLOT(connectionLost()));
+
+  connect(motorBoard_.get(), SIGNAL(newPositions(medlab_motor_control_board::McbEncoderCurrent)),
+          this,        SLOT(updatePositionLabels(medlab_motor_control_board::McbEncoderCurrent)));
+
+  connect(motorBoard_.get(), SIGNAL(newStatus()),
+          this,        SLOT(slot_newStatus()));
+
+  connect(motorBoard_.get(), SIGNAL(limitSwitchEvent(int,bool)),
+          this,        SLOT(slot_limitSwitchEvent(int,bool)));
+
+  for(int ii=0; ii<counter_positionDesired_.size(); ii++){
+    // map the counter_positionDesired signals to a single slot
+    connect(counter_positionDesired_[ii], &QwtCounter::valueChanged, this, [this, ii](double newValue){
+      motorBoard_->setDesiredPosition(ii, static_cast<int32_t>(newValue));
+    });
+  }
+
+  for(int ii=0; ii<checkBox_motorEnable_.size(); ii++){
+    // map the checkBox_motorEnable signals to a single slot
+    connect(checkBox_motorEnable_[ii], &QAbstractButton::clicked, this, [this, ii](){
+      slot_checkBox_motorEnable(ii);
+    });
+  }
 
   // start timer to regularly request status
   std::string topicGetStatus = "/" + nodeName + "/get_status";
@@ -299,7 +334,8 @@ void McbTest::connectionEstablished()
   // change connect button to disconnect
   ui_.button_connectNode->setText("Disconnect");
   ui_.button_connectNode->disconnect();
-  connect(ui_.button_connectNode, SIGNAL(pressed()), this, SLOT(connectionLost()));
+  connect(ui_.button_connectNode, SIGNAL(pressed()),
+          this, SLOT(connectionLost()));
 
   // display IP and MAC addresses
   ui_.label_ip->setText(motorBoard_->getIp());
@@ -307,16 +343,22 @@ void McbTest::connectionEstablished()
 
   // setup button_enableRosControl and ensure we are in the Idle state
   ui_.button_enableRosControl->setChecked(false);
-  connect(ui_.button_enableRosControl, SIGNAL(toggled(bool)), this, SLOT(publishEnableRos(bool)));
+  connect(ui_.button_enableRosControl, SIGNAL(toggled(bool)),
+          this, SLOT(publishEnableRos(bool)));
   publishEnableRos(false);
 
   // connect buttons for setting PID gains
-  QSignalMapper *signalMapperPid = new QSignalMapper(this);
-  connect(signalMapperPid, SIGNAL(mapped(int)), this, SLOT(setGainsDialog(int)));
   for(int ii=0; ii<button_pid_.size(); ii++){
-    signalMapperPid->setMapping(button_pid_.at(ii), ii);
-    connect(button_pid_.at(ii), SIGNAL(pressed()), signalMapperPid, SLOT(map()));
+    connect(button_pid_[ii], &QAbstractButton::pressed, this, [this, ii](){
+      setGainsDialog(ii);
+    });
   }
+//  QSignalMapper *signalMapperPid = new QSignalMapper(this);
+//  connect(signalMapperPid, SIGNAL(mapped(int)), this, SLOT(setGainsDialog(int)));
+//  for(int ii=0; ii<button_pid_.size(); ii++){
+//    signalMapperPid->setMapping(button_pid_.at(ii), ii);
+//    connect(button_pid_.at(ii), SIGNAL(pressed()), signalMapperPid, SLOT(map()));
+//  }
 }
 
 void McbTest::connectionLost()
@@ -329,12 +371,14 @@ void McbTest::connectionLost()
   controlStateChanged(false);
 
   // remove motor board node
-  delete motorBoard_;
+  motorBoard_.reset();
+//  delete motorBoard_;
 
   // change disconnect button to connect
   ui_.button_connectNode->setText("Connect");
   ui_.button_connectNode->disconnect();
-  connect(ui_.button_connectNode, SIGNAL(pressed()), this, SLOT(connectNode()));
+  connect(ui_.button_connectNode, SIGNAL(pressed()),
+          this, SLOT(connectNode()));
 
   // disable pid gains buttons
   for(int ii=0; ii<button_pid_.size(); ii++){
@@ -366,16 +410,23 @@ void McbTest::controlStateChanged(bool controlState)
         checkBox_motorEnable_.at(ii)->setCheckable(true);
       }
     }
-    connect(motorBoard_, SIGNAL(motorStateChanged(int)), this, SLOT(slot_motorStateChanged(int)));
+    connect(motorBoard_.get(), SIGNAL(motorStateChanged(int)),
+            this, SLOT(slot_motorStateChanged(int)));
     ui_.button_enableRosControl->setText("Disable ROS Control");
 
     // setup buttons
     ui_.button_enableAllMotors->setChecked(false);
     ui_.button_disableAllMotors->setChecked(false);
+    ui_.button_zeroAll->setChecked(false);
     ui_.button_enableAllMotors->setCheckable(false);
     ui_.button_disableAllMotors->setCheckable(false);
-    connect(ui_.button_enableAllMotors, SIGNAL(pressed()), this, SLOT(enableAllMotors()));
-    connect(ui_.button_disableAllMotors, SIGNAL(pressed()), this, SLOT(disableAllMotors()));
+    ui_.button_zeroAll->setCheckable(false);
+//    connect(ui_.button_enableAllMotors, SIGNAL(pressed()), this, SLOT(enableAllMotors()));
+//    connect(ui_.button_disableAllMotors, SIGNAL(pressed()), this, SLOT(disableAllMotors()));
+    connect(ui_.button_enableAllMotors, &QAbstractButton::pressed, this, [this](){motorBoard_->enableAllMotors(true);});
+    connect(ui_.button_disableAllMotors, &QAbstractButton::pressed, this, [this](){motorBoard_->enableAllMotors(false);});
+    connect(ui_.button_zeroAll, &QAbstractButton::pressed,
+            motorBoard_.get(), &McbRos::zeroCurrentPositions);
   }
   else{
     // update button text

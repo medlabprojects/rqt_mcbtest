@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>730</width>
-    <height>400</height>
+    <width>750</width>
+    <height>350</height>
    </rect>
   </property>
   <property name="sizePolicy">
@@ -18,15 +18,18 @@
   </property>
   <property name="minimumSize">
    <size>
-    <width>730</width>
-    <height>380</height>
+    <width>750</width>
+    <height>350</height>
    </size>
   </property>
   <property name="maximumSize">
    <size>
-    <width>730</width>
-    <height>400</height>
+    <width>800</width>
+    <height>350</height>
    </size>
+  </property>
+  <property name="focusPolicy">
+   <enum>Qt::ClickFocus</enum>
   </property>
   <property name="windowTitle">
    <string>MCB_GUI</string>
@@ -100,25 +103,152 @@
       </widget>
      </item>
      <item>
-      <spacer name="horizontalSpacer_4">
+      <widget class="Line" name="line_93">
+       <property name="frameShadow">
+        <enum>QFrame::Plain</enum>
+       </property>
        <property name="orientation">
-        <enum>Qt::Horizontal</enum>
+        <enum>Qt::Vertical</enum>
        </property>
-       <property name="sizeType">
-        <enum>QSizePolicy::Fixed</enum>
-       </property>
-       <property name="sizeHint" stdset="0">
-        <size>
-         <width>20</width>
-         <height>20</height>
-        </size>
-       </property>
-      </spacer>
+      </widget>
      </item>
      <item>
-      <widget class="QPushButton" name="button_getStatus">
+      <widget class="QLabel" name="label_MCBis">
+       <property name="font">
+        <font>
+         <weight>75</weight>
+         <bold>true</bold>
+        </font>
+       </property>
        <property name="text">
-        <string>Manually Update Status</string>
+        <string>State:</string>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QLabel" name="label_mcbState">
+       <property name="autoFillBackground">
+        <bool>false</bool>
+       </property>
+       <property name="frameShape">
+        <enum>QFrame::NoFrame</enum>
+       </property>
+       <property name="text">
+        <string>NOT CONNECTED</string>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="Line" name="line_86">
+       <property name="frameShadow">
+        <enum>QFrame::Plain</enum>
+       </property>
+       <property name="orientation">
+        <enum>Qt::Vertical</enum>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QLabel" name="label_MACis">
+       <property name="sizePolicy">
+        <sizepolicy hsizetype="Fixed" vsizetype="Preferred">
+         <horstretch>0</horstretch>
+         <verstretch>0</verstretch>
+        </sizepolicy>
+       </property>
+       <property name="minimumSize">
+        <size>
+         <width>40</width>
+         <height>0</height>
+        </size>
+       </property>
+       <property name="maximumSize">
+        <size>
+         <width>100</width>
+         <height>16777215</height>
+        </size>
+       </property>
+       <property name="font">
+        <font>
+         <weight>75</weight>
+         <bold>true</bold>
+        </font>
+       </property>
+       <property name="text">
+        <string>MAC:</string>
+       </property>
+       <property name="alignment">
+        <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QLabel" name="label_mac">
+       <property name="maximumSize">
+        <size>
+         <width>300</width>
+         <height>16777215</height>
+        </size>
+       </property>
+       <property name="text">
+        <string>DE:AD:BE:EF:FE:XX</string>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="Line" name="line_87">
+       <property name="frameShadow">
+        <enum>QFrame::Plain</enum>
+       </property>
+       <property name="orientation">
+        <enum>Qt::Vertical</enum>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QLabel" name="label_IPis">
+       <property name="sizePolicy">
+        <sizepolicy hsizetype="Minimum" vsizetype="Preferred">
+         <horstretch>0</horstretch>
+         <verstretch>0</verstretch>
+        </sizepolicy>
+       </property>
+       <property name="minimumSize">
+        <size>
+         <width>15</width>
+         <height>10</height>
+        </size>
+       </property>
+       <property name="maximumSize">
+        <size>
+         <width>20</width>
+         <height>50</height>
+        </size>
+       </property>
+       <property name="font">
+        <font>
+         <weight>75</weight>
+         <bold>true</bold>
+        </font>
+       </property>
+       <property name="text">
+        <string>IP:</string>
+       </property>
+       <property name="alignment">
+        <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QLabel" name="label_ip">
+       <property name="maximumSize">
+        <size>
+         <width>150</width>
+         <height>16777215</height>
+        </size>
+       </property>
+       <property name="text">
+        <string>192.168.x.x</string>
        </property>
       </widget>
      </item>
@@ -230,6 +360,41 @@
        </property>
        <property name="flat">
         <bool>false</bool>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="Line" name="line_90">
+       <property name="frameShadow">
+        <enum>QFrame::Plain</enum>
+       </property>
+       <property name="orientation">
+        <enum>Qt::Vertical</enum>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QPushButton" name="button_zeroAll">
+       <property name="sizePolicy">
+        <sizepolicy hsizetype="Minimum" vsizetype="Fixed">
+         <horstretch>0</horstretch>
+         <verstretch>0</verstretch>
+        </sizepolicy>
+       </property>
+       <property name="maximumSize">
+        <size>
+         <width>130</width>
+         <height>16777215</height>
+        </size>
+       </property>
+       <property name="text">
+        <string>Zero All Motors</string>
+       </property>
+       <property name="checkable">
+        <bool>true</bool>
+       </property>
+       <property name="checked">
+        <bool>true</bool>
        </property>
       </widget>
      </item>
@@ -346,7 +511,7 @@
          </property>
          <property name="maximumSize">
           <size>
-           <width>75</width>
+           <width>100</width>
            <height>16777215</height>
           </size>
          </property>
@@ -510,16 +675,16 @@
         <double>0.000000000000000</double>
        </property>
        <property name="numButtons">
-        <number>2</number>
+        <number>3</number>
        </property>
        <property name="stepButton1">
-        <number>100</number>
+        <number>250</number>
        </property>
        <property name="stepButton2">
         <number>1000</number>
        </property>
        <property name="stepButton3">
-        <number>1000</number>
+        <number>3000</number>
        </property>
       </widget>
      </item>
@@ -801,16 +966,16 @@
         <double>0.000000000000000</double>
        </property>
        <property name="numButtons">
-        <number>2</number>
+        <number>3</number>
        </property>
        <property name="stepButton1">
-        <number>100</number>
+        <number>250</number>
        </property>
        <property name="stepButton2">
         <number>1000</number>
        </property>
        <property name="stepButton3">
-        <number>1000</number>
+        <number>3000</number>
        </property>
       </widget>
      </item>
@@ -832,16 +997,16 @@
         <double>0.000000000000000</double>
        </property>
        <property name="numButtons">
-        <number>2</number>
+        <number>3</number>
        </property>
        <property name="stepButton1">
-        <number>100</number>
+        <number>250</number>
        </property>
        <property name="stepButton2">
         <number>1000</number>
        </property>
        <property name="stepButton3">
-        <number>1000</number>
+        <number>3000</number>
        </property>
       </widget>
      </item>
@@ -883,16 +1048,16 @@
         <double>0.000000000000000</double>
        </property>
        <property name="numButtons">
-        <number>2</number>
+        <number>3</number>
        </property>
        <property name="stepButton1">
-        <number>100</number>
+        <number>250</number>
        </property>
        <property name="stepButton2">
         <number>1000</number>
        </property>
        <property name="stepButton3">
-        <number>1000</number>
+        <number>3000</number>
        </property>
       </widget>
      </item>
@@ -1161,7 +1326,7 @@
          </property>
          <property name="maximumSize">
           <size>
-           <width>75</width>
+           <width>100</width>
            <height>16777215</height>
           </size>
          </property>
@@ -1311,7 +1476,7 @@
          </property>
          <property name="maximumSize">
           <size>
-           <width>75</width>
+           <width>100</width>
            <height>16777215</height>
           </size>
          </property>
@@ -1388,16 +1553,16 @@
         <double>0.000000000000000</double>
        </property>
        <property name="numButtons">
-        <number>2</number>
+        <number>3</number>
        </property>
        <property name="stepButton1">
-        <number>100</number>
+        <number>250</number>
        </property>
        <property name="stepButton2">
         <number>1000</number>
        </property>
        <property name="stepButton3">
-        <number>1000</number>
+        <number>3000</number>
        </property>
       </widget>
      </item>
@@ -1659,16 +1824,16 @@
         <double>0.000000000000000</double>
        </property>
        <property name="numButtons">
-        <number>2</number>
+        <number>3</number>
        </property>
        <property name="stepButton1">
-        <number>100</number>
+        <number>250</number>
        </property>
        <property name="stepButton2">
         <number>1000</number>
        </property>
        <property name="stepButton3">
-        <number>1000</number>
+        <number>3000</number>
        </property>
       </widget>
      </item>
@@ -1694,7 +1859,7 @@
          </property>
          <property name="maximumSize">
           <size>
-           <width>75</width>
+           <width>100</width>
            <height>16777215</height>
           </size>
          </property>
@@ -1899,7 +2064,7 @@
          </property>
          <property name="maximumSize">
           <size>
-           <width>75</width>
+           <width>100</width>
            <height>16777215</height>
           </size>
          </property>
@@ -1960,7 +2125,7 @@
          </property>
          <property name="maximumSize">
           <size>
-           <width>75</width>
+           <width>100</width>
            <height>16777215</height>
           </size>
          </property>
@@ -2058,163 +2223,6 @@
         <enum>Qt::Vertical</enum>
        </property>
       </widget>
-     </item>
-    </layout>
-   </item>
-   <item>
-    <layout class="QHBoxLayout" name="horizontalLayout_3">
-     <item>
-      <widget class="QLabel" name="label_MCBis">
-       <property name="font">
-        <font>
-         <weight>75</weight>
-         <bold>true</bold>
-        </font>
-       </property>
-       <property name="text">
-        <string>State:</string>
-       </property>
-      </widget>
-     </item>
-     <item>
-      <widget class="QLabel" name="label_mcbState">
-       <property name="autoFillBackground">
-        <bool>false</bool>
-       </property>
-       <property name="frameShape">
-        <enum>QFrame::NoFrame</enum>
-       </property>
-       <property name="text">
-        <string>NOT CONNECTED</string>
-       </property>
-      </widget>
-     </item>
-     <item>
-      <widget class="Line" name="line_87">
-       <property name="frameShadow">
-        <enum>QFrame::Plain</enum>
-       </property>
-       <property name="orientation">
-        <enum>Qt::Vertical</enum>
-       </property>
-      </widget>
-     </item>
-     <item>
-      <widget class="QLabel" name="label_IPis">
-       <property name="sizePolicy">
-        <sizepolicy hsizetype="Minimum" vsizetype="Preferred">
-         <horstretch>0</horstretch>
-         <verstretch>0</verstretch>
-        </sizepolicy>
-       </property>
-       <property name="minimumSize">
-        <size>
-         <width>15</width>
-         <height>10</height>
-        </size>
-       </property>
-       <property name="maximumSize">
-        <size>
-         <width>20</width>
-         <height>50</height>
-        </size>
-       </property>
-       <property name="font">
-        <font>
-         <weight>75</weight>
-         <bold>true</bold>
-        </font>
-       </property>
-       <property name="text">
-        <string>IP:</string>
-       </property>
-       <property name="alignment">
-        <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
-       </property>
-      </widget>
-     </item>
-     <item>
-      <widget class="QLabel" name="label_ip">
-       <property name="maximumSize">
-        <size>
-         <width>150</width>
-         <height>16777215</height>
-        </size>
-       </property>
-       <property name="text">
-        <string>192.168.x.x</string>
-       </property>
-      </widget>
-     </item>
-     <item>
-      <widget class="Line" name="line_86">
-       <property name="frameShadow">
-        <enum>QFrame::Plain</enum>
-       </property>
-       <property name="orientation">
-        <enum>Qt::Vertical</enum>
-       </property>
-      </widget>
-     </item>
-     <item>
-      <widget class="QLabel" name="label_MACis">
-       <property name="sizePolicy">
-        <sizepolicy hsizetype="Fixed" vsizetype="Preferred">
-         <horstretch>0</horstretch>
-         <verstretch>0</verstretch>
-        </sizepolicy>
-       </property>
-       <property name="minimumSize">
-        <size>
-         <width>40</width>
-         <height>0</height>
-        </size>
-       </property>
-       <property name="maximumSize">
-        <size>
-         <width>100</width>
-         <height>16777215</height>
-        </size>
-       </property>
-       <property name="font">
-        <font>
-         <weight>75</weight>
-         <bold>true</bold>
-        </font>
-       </property>
-       <property name="text">
-        <string>MAC:</string>
-       </property>
-       <property name="alignment">
-        <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
-       </property>
-      </widget>
-     </item>
-     <item>
-      <widget class="QLabel" name="label_mac">
-       <property name="maximumSize">
-        <size>
-         <width>300</width>
-         <height>16777215</height>
-        </size>
-       </property>
-       <property name="text">
-        <string>DE:AD:BE:EF:FE:XX</string>
-       </property>
-      </widget>
-     </item>
-     <item>
-      <spacer name="horizontalSpacer_2">
-       <property name="orientation">
-        <enum>Qt::Horizontal</enum>
-       </property>
-       <property name="sizeHint" stdset="0">
-        <size>
-         <width>40</width>
-         <height>20</height>
-        </size>
-       </property>
-      </spacer>
      </item>
     </layout>
    </item>

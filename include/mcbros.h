@@ -6,7 +6,6 @@
 #include <QString>
 #include <stdint.h>
 #include <QVector>
-//#include <vector>
 #include "medlab_motor_control_board/McbEncoders.h"
 #include "medlab_motor_control_board/McbEncoderCurrent.h"
 #include "medlab_motor_control_board/McbStatus.h"
@@ -31,16 +30,17 @@ public:
   bool enableMotor(uint8_t motor, bool cmd);
   bool setDesiredPosition(medlab_motor_control_board::McbEncoders desiredPositions);
   bool setDesiredPosition(int motor, qint32 position);
-  QVector<float> getEfforts(void);
+  medlab_motor_control_board::McbEncoderCurrent currentPositions(void) {return encoderCurrent_;}
   bool zeroCurrentPosition(uint8_t motor); // zeroes encoder count of a single motor
   bool zeroCurrentPositions(void); // zeroes encoder count for all motors
   double getP(uint8_t motor); // returns Kp gain value from the latest status
   double getI(uint8_t motor); // returns Ki gain value from the latest status
   double getD(uint8_t motor); // returns Kd gain value from the latest status
-  int  getNumMotors(void); // returns number of detected motor modules
+  int  getNumMotors(void) {return (connected_ ? currentStatus_.number_modules : 0);} // returns number of detected motor modules
+  QVector<float> getEfforts(void);
   QString getIp(void);   // returns IP address via uint8_t[4]
   QString getMac(void); // returns MAC address via uint8_t[6]
-  bool isRosControlEnabled(void); // NOTE: may not be accurate if state has changed since last status query
+  bool isRosControlEnabled(void) {return currentControlState_;} // NOTE: may not be accurate if state has changed since last status query
   bool isMotorEnabled(uint8_t motor);
 
 public slots:
