@@ -32,13 +32,13 @@ find_library(
 
 set(rqt_mcbtest_SRCS
   src/mcbtest.cpp
-  src/mcbros.cpp
+#  src/mcbros.cpp
   src/gainsdialog.cpp
 )
 
 set(rqt_mcbtest_HDRS
   include/mcbtest.h
-  include/mcbros.h
+#  include/mcbros.h
   include/gainsdialog.h
 )
 
@@ -92,6 +92,9 @@ target_link_libraries(${PROJECT_NAME} ${QWT_LIBRARIES})
 
 find_package(class_loader)
 class_loader_hide_library_symbols(${PROJECT_NAME})
+
+add_dependencies(${PROJECT_NAME} ${catkin_EXPORTED_TARGETS})
+
 
 install(FILES plugin.xml
   DESTINATION ${CATKIN_PACKAGE_SHARE_DESTINATION}

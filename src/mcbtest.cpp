@@ -3,7 +3,6 @@
 #include <pluginlib/class_list_macros.h>
 #include <QStringList>
 #include <QString>
-//#include <QSignalMapper>
 #include <QVector>
 #include <memory>
 #include <string>
@@ -13,15 +12,13 @@
 #include "std_msgs/Empty.h"
 #include "medlab_motor_control_board/McbEncoders.h"
 
+using namespace medlab_motor_control_board;
 
 namespace rqt_mcbtest {
 
 McbTest::McbTest()
   : rqt_gui_cpp::Plugin()
   , widget_(0)
-  , statusTimerInterval_(0.05)
-  , watchdogLimit_(100)
-  , watchdog_(0)
   , maxMotors_(6)
   , numMotorsDetected_(-1)
 
@@ -62,16 +59,6 @@ void McbTest::publishEnableRos(bool enable)
   // send message to enable ROS control
   motorBoard_->enableRosControl(enable);
 }
-
-//void McbTest::enableAllMotors()
-//{
-//  publishEnableAllMotors(true);
-//}
-
-//void McbTest::disableAllMotors()
-//{
-//  publishEnableAllMotors(false);
-//}
 
 void McbTest::slot_checkBox_motorEnable(int motor)
 {
@@ -135,7 +122,7 @@ void McbTest::updatePositionLabels(medlab_motor_control_board::McbEncoderCurrent
 void McbTest::slot_newStatus()
 {
   // reset watchdog
-  watchdog_ = 0;
+//  watchdog_ = 0;
 
   // update control effort labels
   QVector<float> efforts = motorBoard_->getEfforts();
@@ -247,8 +234,6 @@ void McbTest::initUiNames()
 void McbTest::shutdownPlugin()
 {
   publishEnableRos(false);
-//  pubStatus_.shutdown();
-//  delete motorBoard_;
 }
 
 void McbTest::saveSettings(qt_gui_cpp::Settings& plugin_settings, qt_gui_cpp::Settings& instance_settings) const
@@ -279,28 +264,28 @@ void McbTest::connectNode()
   ui_.label_mcbState->setText("CONNECTING...");
 
   // initialize MCB1
-  motorBoard_ = std::make_unique<McbRos>();
+  motorBoard_ = std::make_unique<medlab_motor_control_board::McbRos>();
   std::string nodeName = ui_.lineEdit_nodeName->text().toStdString();
   motorBoard_->init(nodeName);
 
   // connect McbRos signals/slots
   connect(motorBoard_.get(), SIGNAL(controlStateChanged(bool)),
-          this,        SLOT(controlStateChanged(bool)));
+          this,              SLOT(controlStateChanged(bool)));
 
   connect(motorBoard_.get(), SIGNAL(connectionEstablished()),
-          this,        SLOT(connectionEstablished()));
+          this,              SLOT(connectionEstablished()));
 
   connect(motorBoard_.get(), SIGNAL(connectionLost()),
-          this,        SLOT(connectionLost()));
+          this,              SLOT(connectionLost()));
 
   connect(motorBoard_.get(), SIGNAL(newPositions(medlab_motor_control_board::McbEncoderCurrent)),
-          this,        SLOT(updatePositionLabels(medlab_motor_control_board::McbEncoderCurrent)));
+          this,              SLOT(updatePositionLabels(medlab_motor_control_board::McbEncoderCurrent)));
 
   connect(motorBoard_.get(), SIGNAL(newStatus()),
-          this,        SLOT(slot_newStatus()));
+          this,              SLOT(slot_newStatus()));
 
   connect(motorBoard_.get(), SIGNAL(limitSwitchEvent(int,bool)),
-          this,        SLOT(slot_limitSwitchEvent(int,bool)));
+          this,              SLOT(slot_limitSwitchEvent(int,bool)));
 
   for(int ii=0; ii<counter_positionDesired_.size(); ii++){
     // map the counter_positionDesired signals to a single slot
@@ -315,12 +300,6 @@ void McbTest::connectNode()
       slot_checkBox_motorEnable(ii);
     });
   }
-
-  // start timer to regularly request status
-  std::string topicGetStatus = "/" + nodeName + "/get_status";
-  pubStatus_ = getNodeHandle().advertise<std_msgs::Empty>(topicGetStatus.c_str(),1);
-  watchdog_ = 0;
-  statusTimer_ = getNodeHandle().createTimer(ros::Duration(statusTimerInterval_), &McbTest::callbackStatusTimer, this);
 
   // disconnect button
   ui_.button_connectNode->setCheckable(false);
@@ -353,26 +332,16 @@ void McbTest::connectionEstablished()
       setGainsDialog(ii);
     });
   }
-//  QSignalMapper *signalMapperPid = new QSignalMapper(this);
-//  connect(signalMapperPid, SIGNAL(mapped(int)), this, SLOT(setGainsDialog(int)));
-//  for(int ii=0; ii<button_pid_.size(); ii++){
-//    signalMapperPid->setMapping(button_pid_.at(ii), ii);
-//    connect(button_pid_.at(ii), SIGNAL(pressed()), signalMapperPid, SLOT(map()));
-//  }
 }
 
 void McbTest::connectionLost()
 {
-  // stop statusTimer_
-  statusTimer_.stop();
-
   // set UI elements as if we are in the Idle state
   publishEnableRos(false);
   controlStateChanged(false);
 
   // remove motor board node
   motorBoard_.reset();
-//  delete motorBoard_;
 
   // change disconnect button to connect
   ui_.button_connectNode->setText("Connect");
@@ -421,8 +390,6 @@ void McbTest::controlStateChanged(bool controlState)
     ui_.button_enableAllMotors->setCheckable(false);
     ui_.button_disableAllMotors->setCheckable(false);
     ui_.button_zeroAll->setCheckable(false);
-//    connect(ui_.button_enableAllMotors, SIGNAL(pressed()), this, SLOT(enableAllMotors()));
-//    connect(ui_.button_disableAllMotors, SIGNAL(pressed()), this, SLOT(disableAllMotors()));
     connect(ui_.button_enableAllMotors, &QAbstractButton::pressed, this, [this](){motorBoard_->enableAllMotors(true);});
     connect(ui_.button_disableAllMotors, &QAbstractButton::pressed, this, [this](){motorBoard_->enableAllMotors(false);});
     connect(ui_.button_zeroAll, &QAbstractButton::pressed,
@@ -446,23 +413,6 @@ void McbTest::controlStateChanged(bool controlState)
     ui_.button_enableAllMotors->disconnect();
     ui_.button_disableAllMotors->disconnect();
   }
-}
-
-void McbTest::callbackStatusTimer(const ros::TimerEvent& e){
-  // request status update
-//  publishGetStatus();
-  std_msgs::Empty msg;
-  pubStatus_.publish(msg);
-
-  // check for timeout
-  if(watchdog_ > watchdogLimit_){
-    connectionLost();
-  }
-  else{
-    // increment watchdog
-    watchdog_++;
-  }
-
 }
 
 /*bool hasConfiguration() const

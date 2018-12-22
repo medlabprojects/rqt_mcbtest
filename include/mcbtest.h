@@ -3,7 +3,7 @@
 
 #include <rqt_gui_cpp/plugin.h>
 #include <ui_mcb_gui.h>
-#include "mcbros.h"
+#include <mcb_ros.h>
 #include <QWidget>
 #include <QVector>
 #include <memory>
@@ -41,12 +41,9 @@ protected slots:
   void controlStateChanged(bool controlState);
   void slot_motorStateChanged(int motor);
   void publishEnableRos(bool enable);
-//  void enableAllMotors(void);
-//  void disableAllMotors(void);
   void slot_checkBox_motorEnable(int motor);
   void zeroCurrentPosition(int motor);
   void zeroCurrentPositions();
-//  void publishGetStatus(void);
   void newDesiredPosition(int motor);
   void updatePositionLabels(medlab_motor_control_board::McbEncoderCurrent positions);
   void slot_newStatus(void); // connected to McbRos::newStatus() signal
@@ -66,16 +63,7 @@ private:
   QVector< QLabel* > label_effort_;
   QWidget* widget_;
 
-//  McbRos* motorBoard_;
-  std::unique_ptr<McbRos> motorBoard_;
-
-  ros::Timer statusTimer_;
-  double statusTimerInterval_;
-  ros::Publisher pubStatus_;
-  void callbackStatusTimer(const ros::TimerEvent &e);
-  const int watchdogLimit_; // number of status requests without response before emitting connectionLost()
-  int watchdog_; // counts the number of status requests since the last response
-
+  std::unique_ptr<medlab_motor_control_board::McbRos> motorBoard_;
   void publishEnableAllMotors(bool enable);
   void initUiNames(void);
   const uint8_t maxMotors_;
