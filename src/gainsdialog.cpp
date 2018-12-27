@@ -1,4 +1,4 @@
-#include "gainsdialog.h"
+#include <rqt_mcbtest/gainsdialog.h>
 #include "ui_gainsdialog.h"
 
 #include <QLineEdit>

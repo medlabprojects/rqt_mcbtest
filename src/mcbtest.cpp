@@ -1,5 +1,5 @@
-﻿#include <mcbtest.h>
-#include <gainsdialog.h>
+﻿#include <rqt_mcbtest/mcbtest.h>
+#include <rqt_mcbtest/gainsdialog.h>
 #include <pluginlib/class_list_macros.h>
 #include <QStringList>
 #include <QString>

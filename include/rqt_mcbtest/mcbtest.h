@@ -3,16 +3,20 @@
 
 #include <rqt_gui_cpp/plugin.h>
 #include <ui_mcb_gui.h>
-#include <mcb_ros.h>
+#include <medlab_motor_control_board/mcb_ros.h>
+#include "medlab_motor_control_board/McbEncoders.h"
+#include "ros/ros.h"
+
 #include <QWidget>
 #include <QVector>
-#include <memory>
 #include <QCheckBox>
 #include <QLabel>
 #include <QPushButton>
 #include <qwt_counter.h>
-#include "ros/ros.h"
-#include "medlab_motor_control_board/McbEncoders.h"
+
+#include <memory>
+
+
 
 namespace rqt_mcbtest {
 
