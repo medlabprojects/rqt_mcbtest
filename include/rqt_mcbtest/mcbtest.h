@@ -67,7 +67,7 @@ private:
   QVector< QLabel* > label_effort_;
   QWidget* widget_;
 
-  std::unique_ptr<medlab_motor_control_board::McbRos> motorBoard_;
+  std::unique_ptr<mcb::McbRos> motorBoard_;
   void publishEnableAllMotors(bool enable);
   void initUiNames(void);
   const uint8_t maxMotors_;

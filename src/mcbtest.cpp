@@ -12,7 +12,7 @@
 #include "std_msgs/Empty.h"
 #include "medlab_motor_control_board/McbEncoders.h"
 
-using namespace medlab_motor_control_board;
+using namespace mcb;
 
 namespace rqt_mcbtest {
 
@@ -264,7 +264,7 @@ void McbTest::connectNode()
   ui_.label_mcbState->setText("CONNECTING...");
 
   // initialize MCB1
-  motorBoard_ = std::make_unique<medlab_motor_control_board::McbRos>();
+  motorBoard_ = std::make_unique<McbRos>();
   std::string nodeName = ui_.lineEdit_nodeName->text().toStdString();
   motorBoard_->init(nodeName);
 
@@ -426,4 +426,5 @@ void triggerConfiguration()
 }*/
 
 } // namespace
-PLUGINLIB_DECLARE_CLASS(rqt_mcbtest, McbTest, rqt_mcbtest::McbTest, rqt_gui_cpp::Plugin)
+
+PLUGINLIB_EXPORT_CLASS(rqt_mcbtest::McbTest, rqt_gui_cpp::Plugin)
