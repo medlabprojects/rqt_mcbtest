@@ -5,7 +5,6 @@
 #include <ui_mcb_gui.h>
 #include <medlab_motor_control_board/mcb_ros.h>
 #include "medlab_motor_control_board/McbEncoders.h"
-#include "ros/ros.h"
 
 #include <QWidget>
 #include <QVector>
@@ -44,10 +43,9 @@ protected slots:
   void connectionLost(void);
   void controlStateChanged(bool controlState);
   void slot_motorStateChanged(int motor);
-  void publishEnableRos(bool enable);
   void slot_checkBox_motorEnable(int motor);
   void zeroCurrentPosition(int motor);
-  void zeroCurrentPositions();
+  void zeroCurrentPositions(void);
   void newDesiredPosition(int motor);
   void updatePositionLabels(medlab_motor_control_board::McbEncoderCurrent positions);
   void slot_newStatus(void); // connected to McbRos::newStatus() signal
@@ -68,10 +66,9 @@ private:
   QWidget* widget_;
 
   std::unique_ptr<mcb::McbRos> motorBoard_;
-  void publishEnableAllMotors(bool enable);
   void initUiNames(void);
   const uint8_t maxMotors_;
   int numMotorsDetected_;
 };
-} // namespace
-#endif // my_namespace__my_plugin_H
+} // namespace rqt_mcbtest
+#endif

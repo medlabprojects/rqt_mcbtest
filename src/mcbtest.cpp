@@ -6,9 +6,9 @@
 #include <QVector>
 #include <memory>
 #include <string>
+#include <array>
 #include "ros/ros.h"
 #include <ros/duration.h>
-#include <ros/console.h>
 #include "std_msgs/Bool.h"
 #include "std_msgs/Empty.h"
 #include "medlab_motor_control_board/McbEncoders.h"
@@ -24,8 +24,6 @@ McbTest::McbTest()
   , numMotorsDetected_(-1)
 
 {
-  // Constructor is called first before initPlugin function, needless to say.
-
   // give QObjects reasonable names
   setObjectName("McbTest");
 }
@@ -55,12 +53,6 @@ void McbTest::initPlugin(qt_gui_cpp::PluginContext& context)
   }
 }
 
-void McbTest::publishEnableRos(bool enable)
-{
-  // send message to enable ROS control
-  motorBoard_->enableRosControl(enable);
-}
-
 void McbTest::slot_checkBox_motorEnable(int motor)
 {
   // see if box was checked or unchecked, then issue command
@@ -83,8 +75,6 @@ void McbTest::zeroCurrentPosition(int motor)
     // motors are automatically disabled after zeroing, so we must re-enable
     if(motorWasEnabled){
       ros::Duration(0.05).sleep();
-      ROS_INFO("enable motor"); // BUG: removing this line causes motor to not re-enable when
-                                // the desired position is set to 0. Messages sent too fast?
       motorBoard_->enableMotor(motor, true);
     }
   }
@@ -95,12 +85,6 @@ void McbTest::zeroCurrentPositions()
   for(int ii=0; ii<numMotorsDetected_; ii++){ // inefficient, but reliable and called rarely
     zeroCurrentPosition(ii);
   }
-}
-
-void McbTest::publishEnableAllMotors(bool enable)
-{
-  // publish enable message
-  motorBoard_->enableAllMotors(enable);
 }
 
 void McbTest::newDesiredPosition(int motor)
@@ -117,9 +101,6 @@ void McbTest::updatePositionLabels(medlab_motor_control_board::McbEncoderCurrent
 
 void McbTest::slot_newStatus()
 {
-  // reset watchdog
-//  watchdog_ = 0;
-
   // update control effort labels
   QVector<float> efforts = motorBoard_->getEfforts();
   for(int ii=0; ii<maxMotors_; ii++){
@@ -229,30 +210,24 @@ void McbTest::initUiNames()
 
 void McbTest::shutdownPlugin()
 {
-  publishEnableRos(false);
+  motorBoard_->enableRosControl(false);
+  ros::Duration(0.05).sleep();
 }
 
 void McbTest::saveSettings(qt_gui_cpp::Settings& plugin_settings, qt_gui_cpp::Settings& instance_settings) const
 {
-  // TODO save intrinsic configuration, usually using:
-  // instance_settings.setValue(k, v)
-
   // save node name for next session
   instance_settings.setValue("nodeName", ui_.lineEdit_nodeName->text());
 }
 
 void McbTest::restoreSettings(const qt_gui_cpp::Settings& plugin_settings, const qt_gui_cpp::Settings& instance_settings)
 {
-  // TODO restore intrinsic configuration, usually using:
-  // v = instance_settings.value(k)
-
   // restore previous node name
   if(instance_settings.contains("nodeName")){
     QString nodeName = instance_settings.value("nodeName", "").toString();
     ui_.lineEdit_nodeName->clear();
     ui_.lineEdit_nodeName->insert(nodeName);
   }
-
 }
 
 void McbTest::connectNode()
@@ -318,9 +293,9 @@ void McbTest::connectionEstablished()
 
   // setup button_enableRosControl and ensure we are in the Idle state
   ui_.button_enableRosControl->setChecked(false);
-  connect(ui_.button_enableRosControl, SIGNAL(toggled(bool)),
-          this, SLOT(publishEnableRos(bool)));
-  publishEnableRos(false);
+  connect(ui_.button_enableRosControl, &QAbstractButton::toggled,
+          motorBoard_.get(), &McbRos::enableRosControl);
+  motorBoard_->enableRosControl(false);
 
   // connect buttons for setting PID gains
   for(int ii=0; ii<button_pid_.size(); ii++){
@@ -328,13 +303,22 @@ void McbTest::connectionEstablished()
       setGainsDialog(ii);
     });
   }
+
+  // connect button to reset DACs
+  ui_.button_resetDacs->setChecked(false);
+  ui_.button_resetDacs->setCheckable(false);
+  connect(ui_.button_resetDacs, &QAbstractButton::pressed,
+          motorBoard_.get(), &McbRos::resetDacs);
 }
 
 void McbTest::connectionLost()
 {
   // set UI elements as if we are in the Idle state
-  publishEnableRos(false);
+  motorBoard_->enableRosControl(false);
   controlStateChanged(false);
+  ui_.button_resetDacs->disconnect();
+  ui_.button_resetDacs->setCheckable(true);
+  ui_.button_resetDacs->setChecked(true);
 
   // remove motor board node
   motorBoard_.reset();
