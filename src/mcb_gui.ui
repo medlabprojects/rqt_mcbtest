@@ -6,7 +6,7 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>750</width>
+    <width>775</width>
     <height>350</height>
    </rect>
   </property>
@@ -24,7 +24,7 @@
   </property>
   <property name="maximumSize">
    <size>
-    <width>800</width>
+    <width>775</width>
     <height>350</height>
    </size>
   </property>
@@ -658,32 +658,32 @@
       </widget>
      </item>
      <item row="2" column="4">
-      <widget class="QwtCounter" name="counter_positionDesired0">
+      <widget class="QwtCounter" name="counter_positionDesired0" native="true">
        <property name="maximumSize">
         <size>
          <width>175</width>
          <height>16777215</height>
         </size>
        </property>
-       <property name="minimum">
+       <property name="minimum" stdset="0">
         <double>-4300000.000000000000000</double>
        </property>
-       <property name="maximum">
+       <property name="maximum" stdset="0">
         <double>4300000.000000000000000</double>
        </property>
-       <property name="singleStep">
+       <property name="singleStep" stdset="0">
         <double>0.000000000000000</double>
        </property>
-       <property name="numButtons">
+       <property name="numButtons" stdset="0">
         <number>3</number>
        </property>
-       <property name="stepButton1">
+       <property name="stepButton1" stdset="0">
         <number>250</number>
        </property>
-       <property name="stepButton2">
+       <property name="stepButton2" stdset="0">
         <number>1000</number>
        </property>
-       <property name="stepButton3">
+       <property name="stepButton3" stdset="0">
         <number>3000</number>
        </property>
       </widget>
@@ -758,6 +758,18 @@
      </item>
      <item row="0" column="4">
       <widget class="QLabel" name="label_desiredPosition">
+       <property name="sizePolicy">
+        <sizepolicy hsizetype="Minimum" vsizetype="Preferred">
+         <horstretch>0</horstretch>
+         <verstretch>0</verstretch>
+        </sizepolicy>
+       </property>
+       <property name="minimumSize">
+        <size>
+         <width>175</width>
+         <height>0</height>
+        </size>
+       </property>
        <property name="text">
         <string>Desired Position</string>
        </property>
@@ -949,63 +961,63 @@
       </widget>
      </item>
      <item row="5" column="4">
-      <widget class="QwtCounter" name="counter_positionDesired3">
+      <widget class="QwtCounter" name="counter_positionDesired3" native="true">
        <property name="maximumSize">
         <size>
          <width>175</width>
          <height>16777215</height>
         </size>
        </property>
-       <property name="minimum">
+       <property name="minimum" stdset="0">
         <double>-5000000.000000000000000</double>
        </property>
-       <property name="maximum">
+       <property name="maximum" stdset="0">
         <double>5000000.000000000000000</double>
        </property>
-       <property name="singleStep">
+       <property name="singleStep" stdset="0">
         <double>0.000000000000000</double>
        </property>
-       <property name="numButtons">
+       <property name="numButtons" stdset="0">
         <number>3</number>
        </property>
-       <property name="stepButton1">
+       <property name="stepButton1" stdset="0">
         <number>250</number>
        </property>
-       <property name="stepButton2">
+       <property name="stepButton2" stdset="0">
         <number>1000</number>
        </property>
-       <property name="stepButton3">
+       <property name="stepButton3" stdset="0">
         <number>3000</number>
        </property>
       </widget>
      </item>
      <item row="4" column="4">
-      <widget class="QwtCounter" name="counter_positionDesired2">
+      <widget class="QwtCounter" name="counter_positionDesired2" native="true">
        <property name="maximumSize">
         <size>
          <width>175</width>
          <height>16777215</height>
         </size>
        </property>
-       <property name="minimum">
+       <property name="minimum" stdset="0">
         <double>-5000000.000000000000000</double>
        </property>
-       <property name="maximum">
+       <property name="maximum" stdset="0">
         <double>5000000.000000000000000</double>
        </property>
-       <property name="singleStep">
+       <property name="singleStep" stdset="0">
         <double>0.000000000000000</double>
        </property>
-       <property name="numButtons">
+       <property name="numButtons" stdset="0">
         <number>3</number>
        </property>
-       <property name="stepButton1">
+       <property name="stepButton1" stdset="0">
         <number>250</number>
        </property>
-       <property name="stepButton2">
+       <property name="stepButton2" stdset="0">
         <number>1000</number>
        </property>
-       <property name="stepButton3">
+       <property name="stepButton3" stdset="0">
         <number>3000</number>
        </property>
       </widget>
@@ -1031,32 +1043,32 @@
       </widget>
      </item>
      <item row="3" column="4">
-      <widget class="QwtCounter" name="counter_positionDesired1">
+      <widget class="QwtCounter" name="counter_positionDesired1" native="true">
        <property name="maximumSize">
         <size>
          <width>175</width>
          <height>16777215</height>
         </size>
        </property>
-       <property name="minimum">
+       <property name="minimum" stdset="0">
         <double>-5000000.000000000000000</double>
        </property>
-       <property name="maximum">
+       <property name="maximum" stdset="0">
         <double>5000000.000000000000000</double>
        </property>
-       <property name="singleStep">
+       <property name="singleStep" stdset="0">
         <double>0.000000000000000</double>
        </property>
-       <property name="numButtons">
+       <property name="numButtons" stdset="0">
         <number>3</number>
        </property>
-       <property name="stepButton1">
+       <property name="stepButton1" stdset="0">
         <number>250</number>
        </property>
-       <property name="stepButton2">
+       <property name="stepButton2" stdset="0">
         <number>1000</number>
        </property>
-       <property name="stepButton3">
+       <property name="stepButton3" stdset="0">
         <number>3000</number>
        </property>
       </widget>
@@ -1536,32 +1548,32 @@
       </widget>
      </item>
      <item row="7" column="4">
-      <widget class="QwtCounter" name="counter_positionDesired5">
+      <widget class="QwtCounter" name="counter_positionDesired5" native="true">
        <property name="maximumSize">
         <size>
          <width>175</width>
          <height>16777215</height>
         </size>
        </property>
-       <property name="minimum">
+       <property name="minimum" stdset="0">
         <double>-5000000.000000000000000</double>
        </property>
-       <property name="maximum">
+       <property name="maximum" stdset="0">
         <double>5000000.000000000000000</double>
        </property>
-       <property name="singleStep">
+       <property name="singleStep" stdset="0">
         <double>0.000000000000000</double>
        </property>
-       <property name="numButtons">
+       <property name="numButtons" stdset="0">
         <number>3</number>
        </property>
-       <property name="stepButton1">
+       <property name="stepButton1" stdset="0">
         <number>250</number>
        </property>
-       <property name="stepButton2">
+       <property name="stepButton2" stdset="0">
         <number>1000</number>
        </property>
-       <property name="stepButton3">
+       <property name="stepButton3" stdset="0">
         <number>3000</number>
        </property>
       </widget>
@@ -1807,32 +1819,32 @@
       </widget>
      </item>
      <item row="6" column="4">
-      <widget class="QwtCounter" name="counter_positionDesired4">
+      <widget class="QwtCounter" name="counter_positionDesired4" native="true">
        <property name="maximumSize">
         <size>
          <width>175</width>
          <height>16777215</height>
         </size>
        </property>
-       <property name="minimum">
+       <property name="minimum" stdset="0">
         <double>-5000000.000000000000000</double>
        </property>
-       <property name="maximum">
+       <property name="maximum" stdset="0">
         <double>5000000.000000000000000</double>
        </property>
-       <property name="singleStep">
+       <property name="singleStep" stdset="0">
         <double>0.000000000000000</double>
        </property>
-       <property name="numButtons">
+       <property name="numButtons" stdset="0">
         <number>3</number>
        </property>
-       <property name="stepButton1">
+       <property name="stepButton1" stdset="0">
         <number>250</number>
        </property>
-       <property name="stepButton2">
+       <property name="stepButton2" stdset="0">
         <number>1000</number>
        </property>
-       <property name="stepButton3">
+       <property name="stepButton3" stdset="0">
         <number>3000</number>
        </property>
       </widget>

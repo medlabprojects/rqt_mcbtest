@@ -7,6 +7,7 @@
 #include <memory>
 #include <string>
 #include "ros/ros.h"
+#include <ros/duration.h>
 #include <ros/console.h>
 #include "std_msgs/Bool.h"
 #include "std_msgs/Empty.h"
@@ -81,6 +82,7 @@ void McbTest::zeroCurrentPosition(int motor)
 
     // motors are automatically disabled after zeroing, so we must re-enable
     if(motorWasEnabled){
+      ros::Duration(0.05).sleep();
       ROS_INFO("enable motor"); // BUG: removing this line causes motor to not re-enable when
                                 // the desired position is set to 0. Messages sent too fast?
       motorBoard_->enableMotor(motor, true);
@@ -97,12 +99,6 @@ void McbTest::zeroCurrentPositions()
 
 void McbTest::publishEnableAllMotors(bool enable)
 {
-  // set counters to the current positions (prevents accidentally commanding large steps)
-  auto curPositions = motorBoard_->currentPositions();
-  for(int motor=0; motor<counter_positionDesired_.size(); motor++){
-    counter_positionDesired_.at(motor)->setValue(curPositions.measured[motor]);
-  }
-
   // publish enable message
   motorBoard_->enableAllMotors(enable);
 }
@@ -367,6 +363,9 @@ void McbTest::slot_motorStateChanged(int motor)
 
   // enable/disable counter (effectively; set step size to 0)
   counter_positionDesired_.at(motor)->setSingleStep((enabled ? 1.0 : 0.0));
+
+  // set counter to the current position (prevents accidentally commanding large steps)
+  counter_positionDesired_.at(motor)->setValue(motorBoard_->currentPosition(motor));
 }
 
 void McbTest::controlStateChanged(bool controlState)
