@@ -4,8 +4,8 @@
 
 ## Instructions (tested on Ubuntu 16.04 with ROS Kinetic)
 ### Prerequisites
-  - At least one motor board running the [MCB_ROS firmware](https://github.com/tlbruns/MCB_ROS)
-  - The [medlab_motor_control_board package](https://github.com/vanderbiltmedlab/medlab_motor_control_board)
+  - At least one motor board running the [MCB_ROS](https://github.com/tlbruns/MCB_ROS) firmware
+  - The [medlab_motor_control_board](https://github.com/vanderbiltmedlab/medlab_motor_control_board) package
   
 ### Setup
 1. Download and extract repository to your catkin workspace
