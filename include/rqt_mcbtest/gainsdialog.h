@@ -2,13 +2,9 @@
 #define GAINSDIALOG_H
 
 #include <QDialog>
-
+#include "ui_gainsdialog.h"
 #include <QLineEdit>
 #include <QString>
-
-namespace Ui {
-class GainsDialog;
-}
 
 class GainsDialog : public QDialog
 {
@@ -25,7 +21,7 @@ protected slots:
   void saveGainsAndExit();
 
 private:
-  Ui::GainsDialog *ui;
+  Ui::GainsDialog_ui *ui;
 
   bool isNumberValid(QLineEdit* lineEdit);
   quint8 motor_;

@@ -1,12 +1,12 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <ui version="4.0">
- <class>Mcb_Ui</class>
- <widget class="QWidget" name="Mcb_Ui">
+ <class>McbTest_ui</class>
+ <widget class="QWidget" name="McbTest_ui">
   <property name="geometry">
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>800</width>
+    <width>900</width>
     <height>350</height>
    </rect>
   </property>
@@ -24,7 +24,7 @@
   </property>
   <property name="maximumSize">
    <size>
-    <width>800</width>
+    <width>900</width>
     <height>350</height>
    </size>
   </property>
@@ -726,7 +726,7 @@
          <widget class="QwtCounter" name="counter_positionDesired0" native="true">
           <property name="maximumSize">
            <size>
-            <width>175</width>
+            <width>225</width>
             <height>16777215</height>
            </size>
           </property>
@@ -831,7 +831,7 @@
           </property>
           <property name="minimumSize">
            <size>
-            <width>185</width>
+            <width>240</width>
             <height>0</height>
            </size>
           </property>
@@ -1029,7 +1029,7 @@
          <widget class="QwtCounter" name="counter_positionDesired3" native="true">
           <property name="maximumSize">
            <size>
-            <width>175</width>
+            <width>225</width>
             <height>16777215</height>
            </size>
           </property>
@@ -1060,7 +1060,7 @@
          <widget class="QwtCounter" name="counter_positionDesired2" native="true">
           <property name="maximumSize">
            <size>
-            <width>175</width>
+            <width>225</width>
             <height>16777215</height>
            </size>
           </property>
@@ -1111,7 +1111,7 @@
          <widget class="QwtCounter" name="counter_positionDesired1" native="true">
           <property name="maximumSize">
            <size>
-            <width>175</width>
+            <width>225</width>
             <height>16777215</height>
            </size>
           </property>
@@ -1616,7 +1616,7 @@
          <widget class="QwtCounter" name="counter_positionDesired5" native="true">
           <property name="maximumSize">
            <size>
-            <width>175</width>
+            <width>225</width>
             <height>16777215</height>
            </size>
           </property>
@@ -1887,7 +1887,7 @@
          <widget class="QwtCounter" name="counter_positionDesired4" native="true">
           <property name="maximumSize">
            <size>
-            <width>175</width>
+            <width>225</width>
             <height>16777215</height>
            </size>
           </property>

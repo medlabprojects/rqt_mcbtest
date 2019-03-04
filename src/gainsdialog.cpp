@@ -1,5 +1,5 @@
 #include <rqt_mcbtest/gainsdialog.h>
-#include "ui_gainsdialog.h"
+//#include "ui_gainsdialog.h"
 
 #include <QLineEdit>
 #include <QDoubleValidator>
@@ -7,7 +7,7 @@
 
 GainsDialog::GainsDialog(quint8 motor, double p, double i, double d, QWidget *parent) :
   QDialog(parent),
-  ui(new Ui::GainsDialog),
+  ui(new Ui::GainsDialog_ui),
   motor_(motor),
   p_(p),
   i_(i),

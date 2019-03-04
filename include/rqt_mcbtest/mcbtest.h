@@ -2,9 +2,9 @@
 #define rqt_mcbtest__mcbtest_H
 
 #include <rqt_gui_cpp/plugin.h>
-#include <ui_mcb_gui.h>
+#include "ui_mcbtest_gui.h"
 #include <medlab_motor_control_board/mcb_ros.h>
-#include "medlab_motor_control_board/McbEncoders.h"
+#include <medlab_motor_control_board/McbEncoders.h>
 
 #include <QWidget>
 #include <QVector>
@@ -14,8 +14,6 @@
 #include <qwt_counter.h>
 
 #include <memory>
-
-
 
 namespace rqt_mcbtest {
 
@@ -55,7 +53,7 @@ protected slots:
 
 private:
 
-  Ui::Mcb_Ui ui_;
+  Ui::McbTest_ui ui_;
   QVector< QLabel* > label_positionCurrent_;
   QVector< QwtCounter* > counter_positionDesired_;
   QVector< QCheckBox* > checkBox_motorEnable_;
