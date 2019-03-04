@@ -1,51 +1,58 @@
-cmake_minimum_required(VERSION 3.0)
-
+cmake_minimum_required(VERSION 3.1)
 project(rqt_mcbtest)
 
-add_compile_options(-std=c++14)
+set(CMAKE_CXX_STANDARD 14)
 
-find_package(catkin REQUIRED COMPONENTS
-  roscpp
-  rqt_gui
-  rqt_gui_cpp
-  medlab_motor_control_board
-)
-
-# ensure we use correct Qt version
-set(QT_INSTALL_PATH /opt/Qt)
-file( GLOB_RECURSE sres ${QT_INSTALL_PATH}/*/Qt5Config.cmake )
-get_filename_component( Qt5_DIR ${sres} DIRECTORY )
 find_package(
-  Qt5 5.11
+  catkin REQUIRED
   COMPONENTS
-    Core
-    Widgets
-  REQUIRED
+    roscpp
+    rqt_gui
+    rqt_gui_cpp
+    medlab_motor_control_board
 )
-#find_package(Qt5Core REQUIRED)
-#find_package(Qt5Widgets REQUIRED)
+
+find_package(Qt5Core REQUIRED)
+find_package(Qt5Widgets REQUIRED)
+#find_package(
+#  Qt5
+#  COMPONENTS
+#    Core
+#    Widgets
+#  REQUIRED
+#)
+
+# NOTE: may need to update paths depending on where you installed Qwt
+set(QWT_DIR
+  /usr/local/qwt-6.1.4-qt-5.5.1
+)
 
 find_path(
   QWT_INCLUDE_DIRS
   NAMES
     qwt_counter.h
   PATHS
-    /usr/local/qwt-6.1.4-qt-5.5.1/include
+    ${QWT_DIR}/include
 )
-
 find_library(
   QWT_LIBRARIES
   NAMES
     qwt
   PATHS
-    /usr/local/qwt-6.1.4-qt-5.5.1/lib
+    ${QWT_DIR}/lib
 )
 
-set(rqt_mcbtest_SRCS
+# source files
+set(${PROJECT_NAME}_SRCS
   src/mcbtest.cpp
   src/gainsdialog.cpp
   src/gainsdialog.ui
   src/mcbtest_gui.ui
+)
+
+# location of header files
+set(${PROJECT_NAME}_INCLUDES
+  include
 )
 
 # NOTE: only need to list headers that require moc'ing (i.e. those that inherit QObject)
@@ -63,13 +70,20 @@ set(${PROJECT_NAME}_UIS
 #  resource/mcb_gui_qrc.qrc
 #)
 
-set(${PROJECT_NAME}_INCLUDE_DIRECTORIES
-  include
-)
+
+###################################
+## catkin specific configuration ##
+###################################
+## The catkin_package macro generates cmake config files for your package
+## Declare things to be passed to dependent projects
+## INCLUDE_DIRS: uncomment this if your package contains header files
+## LIBRARIES: libraries you create in this project that dependent projects also need
+## CATKIN_DEPENDS: catkin_packages dependent projects also need
+## DEPENDS: system dependencies of this project that dependent projects also need
 
 catkin_package(
   INCLUDE_DIRS
-    ${${PROJECT_NAME}_INCLUDE_DIRECTORIES}
+    ${${PROJECT_NAME}_INCLUDES}
   LIBRARIES
     ${PROJECT_NAME}
   CATKIN_DEPENDS
@@ -79,17 +93,20 @@ catkin_package(
     medlab_motor_control_board
 )
 
+###########
+## Build ##
+###########
+
+# create MOC code for classes using QObject
 qt5_wrap_cpp(${PROJECT_NAME}_MOCS_H ${${PROJECT_NAME}_MOCS})
+
+# create headers from .ui files
+qt5_wrap_ui(${PROJECT_NAME}_UIS_H ${${PROJECT_NAME}_UIS})
+
 #qt5_add_resources(QT_RESOURCES_CPP ${${PROJECT_NAME}_QRCS})
 
-# ensure generated header files are being created in the devel space
-#set(_cmake_current_binary_dir "${CMAKE_CURRENT_BINARY_DIR}")
-#set(CMAKE_CURRENT_BINARY_DIR "${CATKIN_DEVEL_PREFIX}/${CATKIN_GLOBAL_INCLUDE_DESTINATION}")
-qt5_wrap_ui(${PROJECT_NAME}_UIS_H ${${PROJECT_NAME}_UIS})
-#set(CMAKE_CURRENT_BINARY_DIR "${_cmake_current_binary_dir}")
-
 include_directories(
-  ${${PROJECT_NAME}_INCLUDE_DIRECTORIES}
+  ${${PROJECT_NAME}_INCLUDES}
   "${CMAKE_CURRENT_BINARY_DIR}"
   ${catkin_INCLUDE_DIRS}
   ${Qt5Widgets_INCLUDE_DIRS}
@@ -97,9 +114,9 @@ include_directories(
 )
 
 add_library(${PROJECT_NAME}
-  ${rqt_mcbtest_SRCS}
-  ${rqt_mcbtest_MOCS_H}
-  ${rqt_mcbtest_UIS_H}
+  ${${PROJECT_NAME}_SRCS}
+  ${${PROJECT_NAME}_MOCS_H}
+  ${${PROJECT_NAME}_UIS_H}
 )
 
 target_link_libraries(${PROJECT_NAME}

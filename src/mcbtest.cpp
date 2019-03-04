@@ -12,6 +12,7 @@
 #include <std_msgs/Bool.h>
 #include <std_msgs/Empty.h>
 #include <medlab_motor_control_board/McbEncoders.h>
+#include <medlab_motor_control_board/McbEncoderCurrent.h>
 
 using namespace mcb;
 
@@ -210,8 +211,9 @@ void McbTest::initUiNames()
 
 void McbTest::shutdownPlugin()
 {
-  motorBoard_->enableRosControl(false);
-  ros::Duration(0.05).sleep();
+//  motorBoard_.get()->disconnect();
+//  motorBoard_->enableRosControl(false);
+//  ros::Duration(0.05).sleep();
 }
 
 void McbTest::saveSettings(qt_gui_cpp::Settings& plugin_settings, qt_gui_cpp::Settings& instance_settings) const
