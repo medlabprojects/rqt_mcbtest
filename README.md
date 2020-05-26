@@ -22,17 +22,40 @@
       - Extract to your desired location
       ```
       unzip rqt_mcbtest.zip -d /path/to/catkin/workspace/src
-      ```
- 2. Download and compile Qwt (more info and full instructions: [https://qwt.sourceforge.io/qwtinstall.html](https://qwt.sourceforge.io/qwtinstall.html)
+      ```   
+ 2. Install QT5
+  - First, check the current QT version by running the command
+    ```
+    qmake --version
+    ```
+    If you have QT5-XXX, you don't need to do the following.
+    If you dont have QT5, install it by running the command:
+    ```
+    sudo apt-get install qt5-default
+    ```
+    Once we made sure that we have QT5, we also need to install the SVG libraries which is needed for compiling the Qwt later. Run the command:
+    ```
+    sudo apt-get install libqt5svg5-dev
+    ```
+ 3. Download and compile Qwt (more info and full instructions: [https://qwt.sourceforge.io/qwtinstall.html](https://qwt.sourceforge.io/qwtinstall.html)
    - Download the .zip of the latest version from [https://sourceforge.net/projects/qwt/files/qwt/](https://sourceforge.net/projects/qwt/files/qwt/)
    - Extract somewhere (location does not matter)
    - Open a terminal and navigate to that directory
    - Build and install
    ```
-   /usr/local/Qt-5.0.1/bin/qmake qwt.pro
+   qmake qwt.pro
    make
    sudo make install
    ```
+  4. Setting the Qwt library location in the CMakeList.txt
+    - Open a terminal, and type;
+    ```
+    ls /usr/local/
+    ```
+    to find out what is the path of the Qwt installed. The file with the "qwt-XXX" name is our installed Qwt location. We need to update that in our CMakeList.  
+    - Go to your catkin workspace and open the CMakeList.txt for the rqt_mcbtest package. Go the line with "QWT_DIR" (close the top file), and change the existing line below from "/usr/local/qwt-6.1.4-qt-5.5.1" to your "/usr/local/qwt-XXX". Save the CMakeList.txt and close.
+    - Do a catkin_make to compile the package.
+    
 ### How to Use
 1. Rebuild your catkin workspace (e.g. 'catkin_make')
 2. Start rosserial_server
