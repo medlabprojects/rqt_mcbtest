@@ -47,12 +47,12 @@
    make
    sudo make install
    ```
-  4. Setting the Qwt library location in the CMakeList.txt
-    - Open a terminal, and type;
+  4. Setting the Qwt library location in the CMakeList.txt:
+    - Open a terminal, and type
     ```
     ls /usr/local/
     ```
-    to find out what is the path of the Qwt installed. The file with the "qwt-XXX" name is our installed Qwt location. We need to update that in our CMakeList.  
+    - to find out what is the path of the Qwt installed. The file with the "qwt-XXX" name is our installed Qwt location. We need to update that in our CMakeList.  
     - Go to your catkin workspace and open the CMakeList.txt for the rqt_mcbtest package. Go the line with "QWT_DIR" (close the top file), and change the existing line below from "/usr/local/qwt-6.1.4-qt-5.5.1" to your "/usr/local/qwt-XXX". Save the CMakeList.txt and close.
     - Do a catkin_make to compile the package.
     
